@@ -5,18 +5,22 @@ const express = require('express'),
 
 const app = express();
 
-mongoose.set('useFindAndModify', false);
-mongoose.set('useCreateIndex', true);
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => {
-	//
-});
+
+// importing routes
+const categoryRoutes = require('./routes/categories');
+
+// using routes
+app.get("/api",categoryRoutes)
+
+
 
 const PORT = process.env.PORT || 8000;
 
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 // Connecting our app to our Data-Base and setting up DB
 mongoose
 	.connect('mongodb://localhost:27017/cso', {
