@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const categoryRoutes = require('./routes/categories');
 
 // using routes
-app.get("/api",categoryRoutes)
+app.use("/api",categoryRoutes)
 
 
 
