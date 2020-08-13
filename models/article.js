@@ -7,12 +7,20 @@ var articleSchema = new mongoose.Schema({
 		type: String,
 		index: true,
 	},
+<<<<<<< HEAD
 	body: {type: String
 	},
+=======
+	body: {},
+>>>>>>> 5df0a51cc10933bf0fd52cc3ed854fbf0baeec80
 	featuredPhoto: {
 		data: Buffer,
 		contentType: String,
 	},
 });
 
+<<<<<<< HEAD
 module.exports = mongoose.model('Article', articleSchema);
+=======
+module.exports = mongoose.model('Article', articleSchema);
+>>>>>>> 5df0a51cc10933bf0fd52cc3ed854fbf0baeec80
