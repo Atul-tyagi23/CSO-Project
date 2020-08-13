@@ -1,30 +1,13 @@
-<<<<<<< HEAD
-const Category = require('../models/categories');
-
-exports.getAllCategories = async (req, res) => {
-=======
 const Category = require('../models/category');
 
 exports.getAllCategories = (req, res) => {
 	// if use await then also make the function async
->>>>>>> 5df0a51cc10933bf0fd52cc3ed854fbf0baeec80
 	// try {
 	// 	let categories = await Category.find({});
 	// } catch (error) {
 	// 	return res.status(500).json({ message: 'Server error' });
 	// }
 
-<<<<<<< HEAD
-
-    Category.find({})
-    .then((err, categories) => {
-		if (err) {
-			return res.status(500).json({ message: 'Server error' });
-		}
-		if (!categories) {
-			return res.status(500).json({ message: 'Server error' });
-		}
-=======
 	// if (!categories) {
 	// 	return res.status(500).json({ message: 'Server error' });
 
@@ -46,22 +29,15 @@ exports.getAllCategories = (req, res) => {
 			return res.status(500).json({ message: 'Server error' });
 		}
 		// if length is 0 then 404 error as not found 
->>>>>>> 5df0a51cc10933bf0fd52cc3ed854fbf0baeec80
 		if (categories.length === 0) {
 			return res.status(404).json({ message: 'No categories found' });
 		}
 
-<<<<<<< HEAD
-=======
 		// if found then send with 200 code the categories in json form
->>>>>>> 5df0a51cc10933bf0fd52cc3ed854fbf0baeec80
 		return res.status(200).json({
 			categories,
 		});
 	});
-<<<<<<< HEAD
-};
-=======
 };
 
 exports.createCategory = (req, res) => {
@@ -108,4 +84,3 @@ exports.createCategory = (req, res) => {
 		}
 	});
 };
->>>>>>> 5df0a51cc10933bf0fd52cc3ed854fbf0baeec80

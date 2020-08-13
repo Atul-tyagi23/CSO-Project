@@ -45,7 +45,9 @@ exports.newUser = (req, res)=> {
 exports.doLogin = (req, res, next) =>{
     passport.authenticate('local', function(err, user, info) {
       if (err) {   return res.status(500).json({ message: err.message}); }
+
       if (!user) { return res.status(404).json({ message: 'Incorrect username or password'}); }
+      
       req.logIn(user, function(err) {
         if (err) { return res.status(404).json({ message:err}) }
         return  res.status(200).json({ message:'Successfully loggen In!!'}) ;
