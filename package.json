@@ -7,7 +7,7 @@
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
-  "repository": "https://github.com/Atul-tyagi23/CSO-Project",
+  "repository": "git+https://github.com/Atul-tyagi23/CSO-Project.git",
   "author": "Atul, Kushal, Lakshay, Adarsh",
   "license": "MIT",
   "dependencies": {
@@ -22,5 +22,9 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/Atul-tyagi23/CSO-Project/issues"
+  },
+  "homepage": "https://github.com/Atul-tyagi23/CSO-Project#readme"
 }
