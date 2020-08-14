@@ -1,10 +1,10 @@
 const express = require('express'),
-	mongoose = require('mongoose'),
-	passport = require('passport'),
-	User = require('../models/user'),
-	localStrategy = require('passport-local'),
-	userModule = require('../controllers/user');
-
+      mongoose =  require("mongoose"),
+      passport =  require('passport'),
+      User  =   require('../models/user'),
+      localStrategy =  require('passport-local'),
+	  userModule = require('../controllers/user'); 
+	  
 // Get all users
 exports.getAllUsers = (req, res) => {
 	// find all users
@@ -17,29 +17,29 @@ exports.getAllUsers = (req, res) => {
 			// if length is 0 then 404 error as not found
 			if (users.length === 0) {
 				return res.status(404).json({ message: 'No users  found' });
-			}
-
-			// if found then send with 200 code the users  in json form
-			return res.status(200).json({
-				users,
-			});
-		},
-		(err) => {
-			// if error then 4xx or 5xx codes
-			if (err) {
-				return res.status(500).json({ message: err });
-			}
-		}
-	);
-};
-
+			}	  
+						// if found then send with 200 code the users  in json form
+						return res.status(200).json({
+							users,
+						});
+					},
+					(err) => {
+						// if error then 4xx or 5xx codes
+						if (err) {
+							return res.status(500).json({ message: err });
+						}
+					}
+				);
+	};
+			
+			
 // Handling Signup
+
 exports.newUser = (req, res) => {
 	const newUser = new User({ username: req.body.username, name: req.body.name, email: req.body.email });
 	if (req.body.adminCode == 'adarsh_noob') {
 		newUser.isAdmin = true;
 	}
-
 	User.findOne({ email: req.body.email }).exec((err, sameUser) => {
 		if (err) {
 			return res.status(500).json({ message: 'Server error' });
@@ -60,7 +60,7 @@ exports.newUser = (req, res) => {
 			});
 		}
 	});
-};
+};	
 
 // Handling login
 exports.doLogin = (req, res, next) => {
@@ -68,11 +68,9 @@ exports.doLogin = (req, res, next) => {
 		if (err) {
 			return res.status(500).json({ message: err.message });
 		}
-
 		if (!user) {
 			return res.status(401).json({ message: 'Incorrect username or password' });
 		}
-
 		req.logIn(user, function (err) {
 			if (err) {
 				return res.status(500).json({ message: err });
