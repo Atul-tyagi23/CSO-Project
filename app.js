@@ -17,7 +17,7 @@ const userRoutes = require('./routes/user');
 
 // using routes
 app.use("/api",categoryRoutes);
-app.use( '/login' ,userRoutes);
+app.use( '/user' ,userRoutes);
  
 
 // PASSPORT CONFIGURATION 

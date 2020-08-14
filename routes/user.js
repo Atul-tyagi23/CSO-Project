@@ -11,7 +11,7 @@ const express = require('express'),
       
 // All users 
 router.get('/', userModule.getAllUsers);
- 
+
 // Sign up route
 router.post('/register', userModule.newUser);
 
