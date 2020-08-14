@@ -18,12 +18,8 @@ exports.getAllCategories = (req, res) => {
 
 
 	// find all categories
-	Category.find({}).then((err, categories) => {
+	Category.find({}).then((categories) => {
 
-		// if error then 4xx or 5xx codes
-		if (err) {
-			return res.status(500).json({ message: 'Server error' });
-		}
 		// if error then 4xx or 5xx codes
 		if (!categories) {
 			return res.status(500).json({ message: 'Server error' });
@@ -32,12 +28,20 @@ exports.getAllCategories = (req, res) => {
 		if (categories.length === 0) {
 			return res.status(404).json({ message: 'No categories found' });
 		}
-
 		// if found then send with 200 code the categories in json form
 		return res.status(200).json({
 			categories,
-		});
-	});
+		}); 
+	  }, (err)=>{
+
+		// if error then 4xx or 5xx codes
+		if (err) {
+			return res.status(500).json({ message: 'Server error' });
+		}
+
+	  }
+
+	);
 };
 
 exports.createCategory = (req, res) => {

@@ -10,16 +10,6 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// importing routes
-const categoryRoutes = require('./routes/categories');
-const userRoutes = require('./routes/user');
-
-// using routes
-app.use("/api",categoryRoutes);
-app.use( '/user' ,userRoutes);
- 
-
 // PASSPORT CONFIGURATION 
 
 app.use(require("express-session")({
@@ -34,6 +24,18 @@ app.use(passport.session());
 passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+// importing routes
+const categoryRoutes = require('./routes/categories');
+const userRoutes = require('./routes/user');
+
+// using routes
+app.use("/api",categoryRoutes);
+
+app.use( '/api/user' ,userRoutes);
+ 
+
+
 
 
 
