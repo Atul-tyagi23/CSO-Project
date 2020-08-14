@@ -4,9 +4,12 @@ const express = require('express'),
 	Article = require('./models/article'),
 	passport = require('passport');
 	localStrategy = require('passport-local');
-	User = require('./models/user');
+	User = require('./models/user'),
+	cors = require('cors');
+
  
 const app = express();
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -31,6 +34,7 @@ const userRoutes = require('./routes/user');
 
 // using routes
 app.use("/api",categoryRoutes);
+
 
 app.use( '/api/user' ,userRoutes);
  
