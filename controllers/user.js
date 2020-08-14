@@ -6,6 +6,35 @@ const express = require('express'),
       userModule = require('../controllers/user'); 
        
 
+// Get all users 
+exports.getAllUsers = (req, res)=>{ 
+ 
+	// find all users 
+    User.find({}).
+    then(users => {
+		// if error then 4xx or 5xx codes
+		if (!users ) {
+			return res.status(500).json({ message: 'Server error' });
+		}
+		// if length is 0 then 404 error as not found 
+		if (users .length === 0) {
+			return res.status(404).json({ message: 'No users  found' });
+		}
+
+		// if found then send with 200 code the users  in json form
+		return res.status(200).json({
+			users ,
+		});
+    },
+     (err)=>{
+    	// if error then 4xx or 5xx codes
+		if (err) {
+			return res.status(500).json({ message: err });
+        };
+    })
+};
+
+
 // Handling Signup
 exports.newUser = (req, res)=> {
      const newUser = new User({username: req.body.username, 

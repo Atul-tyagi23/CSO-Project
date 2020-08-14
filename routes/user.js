@@ -8,6 +8,9 @@ const express = require('express'),
       { model } = require('../models/user');
 
 
+      
+// All users 
+router.get('/', userModule.getAllUsers);
  
 // Sign up route
 router.post('/register', userModule.newUser);

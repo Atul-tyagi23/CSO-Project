@@ -43,8 +43,9 @@ const PORT = process.env.PORT || 8000;
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 // Connecting our app to our Data-Base and setting up DB
+ 
 mongoose
-	.connect('mongodb://localhost:27017/cso', {
+	.connect(process.env.DATABASEURL, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 	})
