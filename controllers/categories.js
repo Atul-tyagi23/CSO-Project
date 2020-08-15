@@ -22,11 +22,11 @@ exports.getAllCategories = (req, res) => {
 
 		// if error then 4xx or 5xx codes
 		if (!categories) {
-			return res.status(500).json({ message: 'Server error' });
+			return res.status(500).json({ error: 'Server error' });
 		}
 		// if length is 0 then 404 error as not found 
 		if (categories.length === 0) {
-			return res.status(404).json({ message: 'No categories found' });
+			return res.status(404).json({ error: 'No categories found' });
 		}
 		// if found then send with 200 code the categories in json form
 		return res.status(200).json({
@@ -36,7 +36,7 @@ exports.getAllCategories = (req, res) => {
 
 		// if error then 4xx or 5xx codes
 		if (err) {
-			return res.status(500).json({ message: 'Server error' });
+			return res.status(500).json({ error: 'Server error' });
 		}
 
 	  }
@@ -52,14 +52,14 @@ exports.createCategory = (req, res) => {
 	Category.findOne({ name }).exec((err, category) => {
 		// send back response with 4xx or 5xx error codes if error occurs
 		if (err) {
-			return res.status(500).json({ message: 'Server error' });
+			return res.status(500).json({ error: 'Server error' });
 		}
 
 		// category creation not possible as it already exists
 		if (category) {
 			return res
 				.status(400)
-				.json({ message: `Category named ${name} already exists. Cannot create category with same name` });
+				.json({ error: `Category named ${name} already exists. Cannot create category with same name` });
 		} else {
 			// create a new category
 			const createdCat = new Category({ name });
@@ -67,14 +67,14 @@ exports.createCategory = (req, res) => {
 				// if error then 4xx or 5xx
 				if (err) {
 					return res.status(500).json({
-						message: 'An internal server error occurred. Try again later',
-						error: err,
+						error: 'An internal server error occurred. Try again later',
+						err: err,
 					});
 				} else {
 					// error
 					if (!result) {
 						return res.status(500).json({
-							message: 'Cannot create category currently. Please try again later',
+							error: 'Cannot create category currently. Please try again later',
 						});
 					} else {
 						// send the created caetgory succesffuly with 200 status code

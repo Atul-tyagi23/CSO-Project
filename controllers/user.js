@@ -12,11 +12,11 @@ exports.getAllUsers = (req, res) => {
 		(users) => {
 			// if error then 4xx or 5xx codes
 			if (!users) {
-				return res.status(500).json({ message: 'Server error' });
+				return res.status(500).json({ error: 'Server error' });
 			}
 			// if length is 0 then 404 error as not found
 			if (users.length === 0) {
-				return res.status(404).json({ message: 'No users  found' });
+				return res.status(404).json({ error: 'No users  found' });
 			}	  
 						// if found then send with 200 code the users  in json form
 						return res.status(200).json({
@@ -26,7 +26,7 @@ exports.getAllUsers = (req, res) => {
 					(err) => {
 						// if error then 4xx or 5xx codes
 						if (err) {
-							return res.status(500).json({ message: err });
+							return res.status(500).json({ error: err });
 						}
 					}
 				);
@@ -42,16 +42,16 @@ exports.newUser = (req, res) => {
 	}
 	User.findOne({ email: req.body.email }).exec((err, sameUser) => {
 		if (err) {
-			return res.status(500).json({ message: 'Server error' });
+			return res.status(500).json({ error: 'Server error' });
 		} // checking if same email exists in DB or not
 		if (sameUser) {
 			return res
 				.status(400)
-				.json({ message: `Email address already registered. Please login instead` });
+				.json({ error: `Email address already registered. Please login instead` });
 		} else {
 			User.register(newUser, req.body.password, (err, user) => {
 				if (err) {
-					return res.status(500).json({ message: err.message });
+					return res.status(500).json({ error: err.message });
 				} else {
 					passport.authenticate('local')(req, res, () => {
 						return res.status(200).json({ message: 'Welcome to website: ' + req.body.username });
@@ -66,14 +66,14 @@ exports.newUser = (req, res) => {
 exports.doLogin = (req, res, next) => {
 	passport.authenticate('local', function (err, user, info) {
 		if (err) {
-			return res.status(500).json({ message: err.message });
+			return res.status(500).json({ error: err.message });
 		}
 		if (!user) {
-			return res.status(401).json({ message: 'Incorrect username or password' });
+			return res.status(401).json({ error: 'Incorrect username or password' });
 		}
 		req.logIn(user, function (err) {
 			if (err) {
-				return res.status(500).json({ message: err });
+				return res.status(500).json({ error: err });
 			}
 			return res.status(200).json({ message: 'Successfully loggen In!!' });
 		});
