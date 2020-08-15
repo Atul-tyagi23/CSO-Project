@@ -75,7 +75,7 @@ exports.doLogin = (req, res, next) => {
 			if (err) {
 				return res.status(500).json({ error: err });
 			}
-			return res.status(200).json({ message: 'Successfully loggen In!!' });
+			return res.status(200).json({ message: 'Successfully logged In!!' });
 		});
 	})(req, res, next);
 };
