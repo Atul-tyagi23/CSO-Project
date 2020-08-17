@@ -46,10 +46,9 @@ exports.getAllCategories = (req, res) => {
 
 exports.createCategory = (req, res) => {
 	// request data from user
-	let { name } = req.body.name;
-
+ 
 	// find a category
-	Category.findOne({ name }).exec((err, category) => {
+	Category.findOne({ name: req.body.name }).exec((err, category) => {
 		// send back response with 4xx or 5xx error codes if error occurs
 		if (err) {
 			return res.status(500).json({ error: 'Server error' });
@@ -62,7 +61,7 @@ exports.createCategory = (req, res) => {
 				.json({ error: `Category named ${name} already exists. Cannot create category with same name` });
 		} else {
 			// create a new category
-			const createdCat = new Category({ name });
+			const createdCat = new Category({ name: req.body.name, });
 			createdCat.save((err, result) => {
 				// if error then 4xx or 5xx
 				if (err) {
