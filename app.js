@@ -1,20 +1,25 @@
 const express = require('express'),
 	bodyParser = require('body-parser'),
 	mongoose = require('mongoose'),
+	path = require('path')
 	Article = require('./models/article'),
 	passport = require('passport');
 	localStrategy = require('passport-local');
 	User = require('./models/user'),
 	cors = require('cors');
-
  
 const app = express();
 app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// PASSPORT CONFIGURATION 
 
+
+// for multer
+app.use('/uploads/images', express.static(path.join('uploads', 'images')));
+
+
+// PASSPORT CONFIGURATION 
 app.use(require("express-session")({
     secret: "Secrets of Prisons",
     resave: false,

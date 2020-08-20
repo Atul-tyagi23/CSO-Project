@@ -1,10 +1,10 @@
 const express = require('express'),
-      mongoose =  require("mongoose"),
-      passport =  require('passport'),
-      User  =   require('../models/user'),
-      localStrategy =  require('passport-local'),
-	  userModule = require('../controllers/user'); 
-	  
+	mongoose = require('mongoose'),
+	passport = require('passport'),
+	User = require('../models/user'),
+	localStrategy = require('passport-local'),
+	userModule = require('../controllers/user');
+
 // Get all users
 exports.getAllUsers = (req, res) => {
 	// find all users
@@ -17,26 +17,26 @@ exports.getAllUsers = (req, res) => {
 			// if length is 0 then 404 error as not found
 			if (users.length === 0) {
 				return res.status(404).json({ error: 'No users  found' });
-			}	  
-						// if found then send with 200 code the users  in json form
-						return res.status(200).json({
-							users,
-						});
-					},
-					(err) => {
-						// if error then 4xx or 5xx codes
-						if (err) {
-							return res.status(500).json({ error: err });
-						}
-					}
-				);
-	};
-			
-			
+			}
+			// if found then send with 200 code the users  in json form
+			return res.status(200).json({
+				users,
+			});
+		},
+		(err) => {
+			// if error then 4xx or 5xx codes
+			if (err) {
+				return res.status(500).json({ error: err });
+			}
+		}
+	);
+};
+
 // Handling Signup
 
 exports.newUser = (req, res) => {
-	const newUser = new User({ username: req.body.username, name: req.body.name, email: req.body.email });
+	let avatar = req.file.path;
+	const newUser = new User({ username: req.body.username, name: req.body.name, email: req.body.email, avatar });
 	if (req.body.adminCode == 'adarsh_noob') {
 		newUser.isAdmin = true;
 	}
@@ -45,9 +45,7 @@ exports.newUser = (req, res) => {
 			return res.status(500).json({ error: 'Server error' });
 		} // checking if same email exists in DB or not
 		if (sameUser) {
-			return res
-				.status(400)
-				.json({ error: `Email address already registered. Please login instead` });
+			return res.status(400).json({ error: `Email address already registered. Please login instead` });
 		} else {
 			User.register(newUser, req.body.password, (err, user) => {
 				if (err) {
@@ -60,7 +58,7 @@ exports.newUser = (req, res) => {
 			});
 		}
 	});
-};	
+};
 
 // Handling login
 exports.doLogin = (req, res, next) => {
