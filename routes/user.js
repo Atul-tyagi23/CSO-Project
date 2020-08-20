@@ -1,4 +1,4 @@
-const fileUpload = require('../middleware/file-upload');
+const fileUpload = require('../middleware-file-upload');
 
 const express = require('express'),
 	router = express.Router(),

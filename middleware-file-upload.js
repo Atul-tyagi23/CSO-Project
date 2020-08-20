@@ -1,14 +1,15 @@
 const multer = require('multer');
+const path   = require('path');
 
 const fileUpload = multer({
 	// limit of file
 	limits: 1024 * 1024 * 5, // 5MB
 	storage: multer.diskStorage({
-		destination: (req, file, cb) => {
-			cb(null, 'uploads/images');
-		},
+		// destination: (req, file, cb) => {
+		// 	cb(null, 'uploads/images');
+		// },
 		// if the above one gives error try with this one
-		// destination: path.join(__dirname, '/uploads/images'),
+		 destination: path.join(__dirname, '/uploads/images'),
 		filename: (req, file, cb) => {
 			cb(null, `${Date.now()}` + path.extname(file.originalname));
 		},
