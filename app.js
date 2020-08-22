@@ -35,7 +35,6 @@ const userRoutes = require('./routes/user');
 // using routes
 app.use("/api",categoryRoutes);
 
-
 app.use( '/api/user' ,userRoutes);
  
 
@@ -51,7 +50,7 @@ mongoose.set('useCreateIndex', true);
 // Connecting our app to our Data-Base and setting up DB
  
 mongoose
-	.connect('mongodb+srv://Atultyagi:Vibha@1971@cluster0.7kzzo.mongodb.net/cso?retryWrites=true&w=majority', {
+	.connect(process.env.DATABASEURL, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 	})
