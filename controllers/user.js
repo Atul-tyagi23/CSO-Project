@@ -32,11 +32,31 @@ exports.getAllUsers = (req, res) => {
 	);
 };
 
+
+var cloudinary = require('cloudinary');
+cloudinary.config({ 
+  cloud_name: 'dr6pkartq', 
+  api_key: process.env.CLOUDINARY_API_KEY, 
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+       			
+			
 // Handling Signup
 
-exports.newUser = (req, res) => {
-	// let avatar = req.file.path;
-	const newUser = new User({ username: req.body.username, name: req.body.name, email: req.body.email });
+exports.newUser = async (req, res) => {
+	var image_url;
+	 
+	cloudinary.v2.uploader.upload(req.file.path, function(err, result) {
+		if(err) {
+			return res.status(500).json({ error: 'Server error' });
+
+		} 
+		image_url = result.secure_url;
+        
+
+	});
+	console.log(image_url);
+    const newUser = new User({ username: req.body.username, name: req.body.name, email: req.body.email, avatar: image_url });
 	if (req.body.adminCode == 'adarsh_noob') {
 		newUser.isAdmin = true;
 	}
@@ -45,11 +65,13 @@ exports.newUser = (req, res) => {
 			return res.status(500).json({ error: 'Server error' });
 		} // checking if same email exists in DB or not
 		if (sameUser) {
-			return res.status(400).json({ error: `Email address already registered. Please login instead` });
+			return res
+				.status(400)
+				.json({ error: `Email address already registered. Please login instead` });
 		} else {
 			User.register(newUser, req.body.password, (err, user) => {
 				if (err) {
-					return res.status(500).json({ error: err.message });
+					return res.status(500).json({ error: 'Server error' });
 				} else {
 					passport.authenticate('local')(req, res, () => {
 						return res.status(200).json({ message: 'Welcome to website: ' + req.body.username });
@@ -58,7 +80,8 @@ exports.newUser = (req, res) => {
 			});
 		}
 	});
-};
+};	
+
 
 // Handling login
 exports.doLogin = (req, res, next) => {
