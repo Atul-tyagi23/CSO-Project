@@ -35,8 +35,8 @@ exports.getAllUsers = (req, res) => {
 // Handling Signup
 
 exports.newUser = (req, res) => {
-	let avatar = req.file.path;
-	const newUser = new User({ username: req.body.username, name: req.body.name, email: req.body.email, avatar });
+	// let avatar = req.file.path;
+	const newUser = new User({ username: req.body.username, name: req.body.name, email: req.body.email });
 	if (req.body.adminCode == 'adarsh_noob') {
 		newUser.isAdmin = true;
 	}

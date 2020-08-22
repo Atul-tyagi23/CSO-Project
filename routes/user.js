@@ -13,7 +13,8 @@ const express = require('express'),
 router.get('/', userModule.getAllUsers);
 
 // Sign up route
-router.post('/register', fileUpload.single('avatar'), userModule.newUser);
+// router.post('/register', fileUpload.single('avatar'), userModule.newUser);
+router.post('/register', userModule.newUser);
 
 // Login route
 router.post('/login', userModule.doLogin);
