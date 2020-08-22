@@ -46,7 +46,7 @@ cloudinary.config({
 exports.newUser = async (req, res) => {
 	var image_url;
 	 
-	cloudinary.v2.uploader.upload(req.file.path, function(err, result) {
+	await cloudinary.v2.uploader.upload(req.file.path, function(err, result) {
 		if(err) {
 			return res.status(500).json({ error: 'Server error' });
 
@@ -55,8 +55,7 @@ exports.newUser = async (req, res) => {
         
 
 	});
-	console.log(image_url);
-    const newUser = new User({ username: req.body.username, name: req.body.name, email: req.body.email, avatar: image_url });
+     const newUser = new User({ username: req.body.username, name: req.body.name, email: req.body.email, avatar: image_url });
 	if (req.body.adminCode == 'adarsh_noob') {
 		newUser.isAdmin = true;
 	}
