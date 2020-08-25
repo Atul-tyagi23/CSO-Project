@@ -8,23 +8,22 @@ const express = require('express'),
 	localStrategy = require('passport-local'),
 	userModule = require('../controllers/user');
 
+require('dotenv').config();
+
 var multer = require('multer');
 var storage = multer.diskStorage({
-  filename: function(req, file, callback) {
-    callback(null, Date.now() + file.originalname);
-  }
+	filename: function (req, file, callback) {
+		callback(null, Date.now() + file.originalname);
+	},
 });
 var imageFilter = function (req, file, cb) {
-    // accept image files only
-    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
-        return cb(new Error('Only image files are allowed!'), false);
-    }
-    cb(null, true);
+	// accept image files only
+	if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+		return cb(new Error('Only image files are allowed!'), false);
+	}
+	cb(null, true);
 };
-var upload = multer({ storage: storage, fileFilter: imageFilter})
-
-	
-	 
+var upload = multer({ storage: storage, fileFilter: imageFilter });
 
 // All users
 router.get('/', userModule.getAllUsers);

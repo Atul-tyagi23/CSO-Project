@@ -3,23 +3,23 @@ const express = require('express'),
 	mongoose = require('mongoose'),
 	Article = require('./models/article'),
 	passport = require('passport');
-	localStrategy = require('passport-local');
-	User = require('./models/user'),
-	cors = require('cors');
+localStrategy = require('passport-local');
+(User = require('./models/user')), (cors = require('cors'));
 
- 
 const app = express();
 app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// PASSPORT CONFIGURATION 
+// PASSPORT CONFIGURATION
 
-app.use(require("express-session")({
-    secret: "Secrets of Prisons",
-    resave: false,
-    saveUninitialized: false
-}));
+app.use(
+	require('express-session')({
+		secret: 'Secrets of Prisons',
+		resave: false,
+		saveUninitialized: false,
+	})
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -33,22 +33,38 @@ const categoryRoutes = require('./routes/categories');
 const userRoutes = require('./routes/user');
 
 // using routes
-app.use("/api",categoryRoutes);
+app.use('/api', categoryRoutes);
 
-app.use( '/api/user' ,userRoutes);
- 
+app.use('/api/user', userRoutes);
 
+// for multer upload of images
+var multer = require('multer');
+const { uploadsController } = require('./controllers/upload');
+var storage = multer.diskStorage({
+	filename: function (req, file, callback) {
+		callback(null, Date.now() + file.originalname);
+	},
+});
+var imageFilter = function (req, file, cb) {
+	// accept image files only
+	if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+		return cb(new Error('Only image files are allowed!'), false);
+	}
+	cb(null, true);
+};
+var upload = multer({ storage: storage, fileFilter: imageFilter });
 
-
-
-
+app.get('/uploads', (req, res) => {
+	return res.status(200).json({ yes: 'working' });
+});
+app.post('/uploads', upload.single('file'), uploadsController); 
 
 const PORT = process.env.PORT || 8000;
 
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 // Connecting our app to our Data-Base and setting up DB
- 
+
 mongoose
 	.connect(process.env.DATABASEURL, {
 		useNewUrlParser: true,
@@ -61,5 +77,3 @@ mongoose
 		});
 	})
 	.catch((error) => console.log(error.message));
-
- 
