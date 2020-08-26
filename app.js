@@ -5,6 +5,7 @@ const express = require('express'),
 	passport = require('passport');
 localStrategy = require('passport-local');
 (User = require('./models/user')), (cors = require('cors'));
+require('dotenv').config()
 
 const app = express();
 app.use(cors());

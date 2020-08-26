@@ -11,6 +11,7 @@ const express = require('express'),
 require('dotenv').config();
 
 var multer = require('multer');
+const { update } = require('../models/user');
 var storage = multer.diskStorage({
 	filename: function (req, file, callback) {
 		callback(null, Date.now() + file.originalname);
@@ -29,8 +30,11 @@ var upload = multer({ storage: storage, fileFilter: imageFilter });
 router.get('/', userModule.getAllUsers);
 
 // Sign up route
-// router.post('/register', fileUpload.single('avatar'), userModule.newUser);
-router.post('/register', upload.single('image'), userModule.newUser);
+ router.post('/register', upload.single('image'), userModule.newUser);
+
+// Edit user info route
+
+router.put('/:id', upload.single('image'), userModule.updateUserInfo);
 
 // Login route
 router.post('/login', userModule.doLogin);

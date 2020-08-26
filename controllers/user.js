@@ -107,3 +107,48 @@ exports.doLogout = (req, res) => {
 	req.logOut();
 	return res.status(200).json({ message: 'Logged you out!' });
 };
+
+// Updating user info
+exports.updateUserInfo = async (req, res)=>{
+	var image_url ;
+
+	await User.findById(req.params.id, (err, foundUser)=>{ // storing previous user image 
+		if(err){
+			return res.status(500).json({error: err})
+		}
+		image_url = foundUser['avatar'];
+	});
+
+	if(req.file){
+	await cloudinary.v2.uploader.upload(req.file.path, function(err, result) {
+		if(err) {
+			return res.status(500).json({ error: 'Server error' });
+		} 
+		image_url = result.secure_url;
+	});
+    }
+
+	update = {
+		name: req.body.name,
+		username: req.body.username,
+		image: image_url
+	}
+	 
+
+	// find and update  
+     User.findByIdAndUpdate(req.params.id, update,async (err, updatedUser)=>{
+        if(err){
+            return res.status(500).json({ error: err.message });
+        }else {
+		  if(req.body.oldpassword){ // Password update
+			await updatedUser.changePassword(req.body.oldpassword, req.body.newpassword, (err)=>{
+				if(err){
+					return res.status(500).json({ error: err.message });				
+				}}
+			)}
+
+			return res.status(200).json({ message: 'Successfully updated'});
+        }
+    });
+
+};
