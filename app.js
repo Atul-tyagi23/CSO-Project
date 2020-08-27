@@ -13,6 +13,9 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // PASSPORT CONFIGURATION
+// importing routes
+ 
+
 
 app.use(
 	require('express-session')({
