@@ -42,14 +42,19 @@ cloudinary.config({
 // Handling Signup
 
 exports.newUser = async (req, res) => {
-	var image_url;
+	let image_url = 'https://images.unsplash.com/photo-1594007759138-855170ec8dc0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80' ;
 
-	await cloudinary.v2.uploader.upload(req.file.path, function (err, result) {
-		if (err) {
-			return res.status(500).json({ error: 'Server error' });
-		}
-		image_url = result.secure_url;
-	});
+	if (req.file) {
+		let result; 
+	try{
+		result =	await cloudinary.v2.uploader.upload(req.file.path);
+	 }
+	 catch(error){
+		return res.status(500).json({ error: 'Server error' });
+	 }
+	 image_url = result.secure_url;}
+
+
 	const newUser = new User({
 		username: req.body.username,
 		name: req.body.name,
@@ -59,6 +64,7 @@ exports.newUser = async (req, res) => {
 	if (req.body.adminCode == 'adarsh_noob') {
 		newUser.isAdmin = true;
 	}
+
 	User.findOne({ email: req.body.email }).exec((err, sameUser) => {
 		if (err) {
 			return res.status(500).json({ error: 'Server error' });
@@ -124,12 +130,19 @@ exports.updateUserInfo = async (req, res) => {
 	}
 
 	if (req.file) {
-		await cloudinary.v2.uploader.upload(req.file.path, function (err, result) {
-			if (err) {
-				return res.status(500).json({ error: 'Server error' });
-			}
-			image_url = result.secure_url;
-		});
+		let result; 
+	try{
+		result =	await cloudinary.v2.uploader.upload(req.file.path);
+	 }
+	 catch(error){
+		return res.status(500).json({ error: 'Server error' });
+	 }
+	 image_url = result.secure_url;
+	//   result =	await cloudinary.v2.uploader.upload(req.file.path, function (err, result) {
+	// 		if (err) {
+	// 		}
+	// 		image_url = result.secure_url;
+	// 	});
 	}
 
 	let update = {
@@ -143,7 +156,7 @@ exports.updateUserInfo = async (req, res) => {
 	try {
 		updatedUser = await User.findByIdAndUpdate(req.params.id, update, { new: true }).exec();
 	} catch (error) {
-		console.log(err);
+		// console.log(error);
 		return res.status(500).json({ message: 'Could not update user' });
 	}
 
