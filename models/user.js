@@ -23,6 +23,11 @@ var UserSchema = new mongoose.Schema(
 			type: String,
 			minlength: 6,
 		},
+		about:{ 
+			type: String,
+			minlength: 25 , 			
+		}
+		,
 
 		// koi default photo daal dio
 		// ek folder bna le defaults usme ek folder aur usme ek default avatar
