@@ -63,7 +63,7 @@ exports.newUser = async (req, res) => {
 	});
 	if (req.body.adminCode == 'adarsh_noob') {
 		newUser.isAdmin = true;
-	} git config --global user.name "Atul-tyagi23"
+	}
 
 	User.findOne({ email: req.body.email }).exec((err, sameUser) => {
 		if (err) {
