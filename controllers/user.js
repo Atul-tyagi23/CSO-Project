@@ -42,12 +42,11 @@ cloudinary.config({
 // Handling Signup
 
 exports.newUser = async (req, res) => {
-	let image_url = 'https://images.unsplash.com/photo-1594007759138-855170ec8dc0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80' ;
-
+	let image_url ;
 	if (req.file) {
 		let result; 
 	try{
-		result =	await cloudinary.v2.uploader.upload(req.file.path);
+		result = await cloudinary.v2.uploader.upload(req.file.path);
 	 }
 	 catch(error){
 		return res.status(500).json({ error: 'Server error' });
