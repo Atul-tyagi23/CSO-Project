@@ -23,19 +23,21 @@ var UserSchema = new mongoose.Schema(
 			type: String,
 			minlength: 6,
 		},
-		about:{ 
+		about: {
 			type: String,
-			default: "https://images.unsplash.com/photo-1594007759138-855170ec8dc0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80",
-			minlength: 25 , 			
-		}
-		,
 
+			minlength: 25,
+		},
 		// koi default photo daal dio
 		// ek folder bna le defaults usme ek folder aur usme ek default avatar
 		// phir path.join() se uska path aur isme daal dio
 		// wrna koi url se utha lio
 		// par sabme same ho bas ye yaad rkhio
-		avatar: { type: String, default: '' },
+		avatar: {
+			type: String,
+			default:
+				'https://images.unsplash.com/photo-1594007759138-855170ec8dc0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80',
+		},
 		articles: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
