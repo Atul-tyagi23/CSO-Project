@@ -20,8 +20,9 @@ var articleSchema = new mongoose.Schema(
 		},
 		body: {},
 		featuredPhoto: {
-			data: Buffer,
-			contentType: String,
+			// data: Buffer,
+			type: String,
+			// contentType: String,
 		},
 		category: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
 		postedBy: {

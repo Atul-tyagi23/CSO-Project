@@ -7,18 +7,14 @@ cloudinary.config({
 
 exports.uploadsController = async (req, res, next) => {
 	var image_url;
-
-	try {
-		await cloudinary.v2.uploader.upload(req.file.path, function (err, result) {
-			if (err) {
-				return res.status(500).json({ error: 'Server error' });
-			}
-			image_url = result.secure_url;
-		});
-	} catch (error) {
-		console.log(error);
-		return res.status(400).json({ error });
+	if (req.file) {
+		let result;
+		try {
+			result = await cloudinary.v2.uploader.upload(req.file.path);
+		} catch (error) {
+			return res.status(500).json({ error: 'Server error' });
+		}
+		image_url = result.secure_url;
+		return res.status(200).json({ url: image_url });
 	}
-
-	return res.status(200).json({ url: image_url });
 };
