@@ -26,7 +26,7 @@ middlewareObj.checkUserOwnership = async (req, res, next)=> {
         }
     }    
     else {
-        return res.status(400).json({ error: 'You do not have permission to do that' });      
+        return res.status(400).json({ error: 'You do not have permission to do that!' });      
     } 
     
 }

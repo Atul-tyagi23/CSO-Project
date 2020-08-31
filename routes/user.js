@@ -34,7 +34,7 @@ router.get('/', userModule.getAllUsers);
 
 // Edit user info route
 
-router.put('/:id', middlewareObj.checkUserOwnership , upload.single('image'), userModule.updateUserInfo);
+router.put('/:id', middlewareObj.checkUserOwnership , upload.single('image'), userModule.updateUserInfo) ;
 
 // Login route
 router.post('/login', userModule.doLogin);
