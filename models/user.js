@@ -25,7 +25,7 @@ var UserSchema = new mongoose.Schema(
 		},
 		about: {
 			type: String,
-
+			default: "https://images.unsplash.com/photo-1594007759138-855170ec8dc0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80",
 			minlength: 25,
 		},
 		// koi default photo daal dio
