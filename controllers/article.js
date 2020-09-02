@@ -15,7 +15,7 @@ exports.createArticle = async (req, res) => {
 	let isArticleThere;
 	let generatedSlug = slugify(title);
 
-	let category = JSON.parse(categories);
+	let category = categories.split(',');
 
 	try {
 		isArticleThere = await Article.findOne({ slug: generatedSlug });
@@ -33,7 +33,7 @@ exports.createArticle = async (req, res) => {
 		try {
 			result = await cloudinary.v2.uploader.upload(req.file.path);
 		} catch (error) {
-			return res.status(500).json({ error: 'Server error' });
+			return res.status(500).json({ message: 'Server error' });
 		}
 		image_url = result.secure_url;
 	}
