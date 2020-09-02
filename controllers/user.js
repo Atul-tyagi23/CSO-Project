@@ -42,17 +42,16 @@ cloudinary.config({
 // Handling Signup
 
 exports.newUser = async (req, res) => {
-	let image_url ;
+	let image_url;
 	if (req.file) {
-		let result; 
-	try{
-		result = await cloudinary.v2.uploader.upload(req.file.path);
-	 }
-	 catch(error){
-		return res.status(500).json({ error: 'Server error' });
-	 }
-	 image_url = result.secure_url;}
-
+		let result;
+		try {
+			result = await cloudinary.v2.uploader.upload(req.file.path);
+		} catch (error) {
+			return res.status(500).json({ error: 'Server error' });
+		}
+		image_url = result.secure_url;
+	}
 
 	const newUser = new User({
 		username: req.body.username,
@@ -129,26 +128,25 @@ exports.updateUserInfo = async (req, res) => {
 	}
 
 	if (req.file) {
-		let result; 
-	try{
-		result =	await cloudinary.v2.uploader.upload(req.file.path);
-	 }
-	 catch(error){
-		return res.status(500).json({ error: 'Server error' });
-	 }
-	 image_url = result.secure_url;
-	//   result =	await cloudinary.v2.uploader.upload(req.file.path, function (err, result) {
-	// 		if (err) {
-	// 		}
-	// 		image_url = result.secure_url;
-	// 	});
+		let result;
+		try {
+			result = await cloudinary.v2.uploader.upload(req.file.path);
+		} catch (error) {
+			return res.status(500).json({ error: 'Server error' });
+		}
+		image_url = result.secure_url;
+		//   result =	await cloudinary.v2.uploader.upload(req.file.path, function (err, result) {
+		// 		if (err) {
+		// 		}
+		// 		image_url = result.secure_url;
+		// 	});
 	}
 
 	let update = {
 		name: req.body.name,
 		username: req.body.username,
 		avatar: image_url,
-		about: req.body.about
+		about: req.body.about,
 	};
 
 	let updatedUser;
