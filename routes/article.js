@@ -1,5 +1,5 @@
 const express = require('express');
-const { createArticle } = require('../controllers/article');
+const { createArticle, allArticles } = require('../controllers/article');
 const multer = require('multer');
 
 const router = express.Router();
@@ -17,6 +17,7 @@ const imageFilter = function (req, file, cb) {
 };
 const upload = multer({ storage: storage, fileFilter: imageFilter });
 
+router.get('/', allArticles);
 router.post('/create', upload.single('image'), createArticle);
 
 module.exports = router;

@@ -1,4 +1,3 @@
-const express = require('express');
 const slugify = require('slugify');
 const cloudinary = require('cloudinary');
 
@@ -10,8 +9,24 @@ cloudinary.config({
 	api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-exports.createArticle = (req, res) => {
-	const { title, featuredPhoto, categories, body, mdesc } = req.body;
+exports.createArticle = async (req, res) => {
+	const { title, categories, body, mdesc } = req.body;
+
+	let isArticleThere;
+	let generatedSlug = slugify(title);
+
+	let category = JSON.parse(categories);
+
+	try {
+		isArticleThere = await Article.findOne({ slug: generatedSlug });
+	} catch (error) {
+		return res.status(500).json({ message: error.message });
+	}
+
+	if (isArticleThere) {
+		return res.status(400).json({ message: 'An article with same title already exists. Please change the name' });
+	}
+
 	let image_url;
 	if (req.file) {
 		let result;
@@ -22,24 +37,34 @@ exports.createArticle = (req, res) => {
 		}
 		image_url = result.secure_url;
 	}
-	let isArticleThere;
-	let generatedSlug = slugify(title);
-	try {
-		isArticleThere = Article.findOne({ slug: generatedSlug });
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
-
-	if (isArticleThere) {
-		return res.status(400).json({ message: 'An article with same title already exists. Please change the name' });
-	}
 
 	let createdArticle = new Article({
 		title,
-		slug:generatedSlug,
+		slug: generatedSlug,
+		mdesc,
 		body,
-		categories
-	})
+		category,
+		featuredPhoto: image_url,
+	});
 
-	return res.status(201).json({ message: `Article named "${title} published successfully".` });
+	try {
+		await createdArticle.save();
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ message: 'Error in creating article' });
+	}
+
+	return res.status(201).json({ message: `Article named "${title}" published successfully.`, createdArticle });
+};
+
+exports.allArticles = async (req, res) => {
+	let articles;
+	try {
+		articles = await Article.find({});
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ message: 'Error in fetching articles' });
+	}
+
+	return res.status(200).json({ articles });
 };

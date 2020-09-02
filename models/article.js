@@ -20,9 +20,7 @@ var articleSchema = new mongoose.Schema(
 		},
 		body: {},
 		featuredPhoto: {
-			// data: Buffer,
 			type: String,
-			// contentType: String,
 		},
 		category: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
 		postedBy: {
@@ -30,7 +28,7 @@ var articleSchema = new mongoose.Schema(
 			ref: 'User',
 			// required: true,
 		},
-		likes: { type: Number },
+		likes: { type: Number, default: 0 },
 		likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 	},
 	{
