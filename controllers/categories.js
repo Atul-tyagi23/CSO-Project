@@ -1,21 +1,6 @@
 const Category = require('../models/category');
 
 exports.getAllCategories = (req, res) => {
-	// if use await then also make the function async
-	// try {
-	// 	let categories = await Category.find({});
-	// } catch (error) {
-	// 	return res.status(500).json({ message: 'Server error' });
-	// }
-
-	// if (!categories) {
-	// 	return res.status(500).json({ message: 'Server error' });
-
-
-	// if (categories.length === 0) {
-	// 	return res.status(404).json({ message: 'No categories found' });
-	// }
-
 
 	// find all categories
 	Category.find({}).then((categories) => {

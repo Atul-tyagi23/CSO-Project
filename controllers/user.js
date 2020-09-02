@@ -172,51 +172,51 @@ exports.updateUserInfo = async (req, res) => {
 		}
 	}
 	return res.status(200).json({ message: 'Updated user credentials successfully.' });
-
 	// console.log('update is', update);
 
-	// await User.findById(req.params.id, (err, foundUser) => {
-	// 	// storing previous user image
-	// 	if (err) {
-	// 		return res.status(500).json({ error: err });
-	// 	}
-	// 	image_url = foundUser['avatar'];
-	// });
+    // await User.findById(req.params.id, (err, foundUser) => {
+    //  // storing previous user image
+    //  if (err) {
+    //      return res.status(500).json({ error: err });
+    //  }
+    //  image_url = foundUser['avatar'];
+    // });
 
-	// if (req.file) {
-	// 	await cloudinary.v2.uploader.upload(req.file.path, function (err, result) {
-	// 		if (err) {
-	// 			return res.status(500).json({ error: 'Server error' });
-	// 		}
-	// 		image_url = result.secure_url;
-	// 	});
-	// }
+    // if (req.file) {
+    //  await cloudinary.v2.uploader.upload(req.file.path, function (err, result) {
+    //      if (err) {
+    //          return res.status(500).json({ error: 'Server error' });
+    //      }
+    //      image_url = result.secure_url;
+    //  });
+    // }
 
-	// update = {
-	// 	name: req.body.name,
-	// 	username: req.body.username,
-	// 	image: image_url,
-	// };
+    // update = {
+    //  name: req.body.name,
+    //  username: req.body.username,
+    //  image: image_url,
+    // };
 
-	// // find and update
-	// User.findByIdAndUpdate(req.params.id, update, (err, updatedUser) => {
-	// 	// console.log(`update is`, update);
-	// 	console.log(updatedUser);
-	// 	if (err) {
-	// 		console.log(err);
-	// 		return res.status(500).json({ error: err.message });
-	// 	} else {
-	// 		if (req.body.oldpassword) {
-	// 			// Password update
-	// 			updatedUser.changePassword(req.body.oldpassword, req.body.newpassword, (err) => {
-	// 				if (err) {
-	// 					console.log(err);
-	// 					return res.status(500).json({ error: err.message });
-	// 				}
-	// 			});
-	// 		}
+    // // find and update
+    // User.findByIdAndUpdate(req.params.id, update, (err, updatedUser) => {
+    //  // console.log(`update is`, update);
+    //  console.log(updatedUser);
+    //  if (err) {
+    //      console.log(err);
+    //      return res.status(500).json({ error: err.message });
+    //  } else {
+    //      if (req.body.oldpassword) {
+    //          // Password update
+    //          updatedUser.changePassword(req.body.oldpassword, req.body.newpassword, (err) => {
+    //              if (err) {
+    //                  console.log(err);
+    //                  return res.status(500).json({ error: err.message });
+    //              }
+    //          });
+    //      }
 
-	// 		return res.status(200).json({ message: 'Successfully updated' });
-	// 	}
-	// });
+    //      return res.status(200).json({ message: 'Successfully updated' });
+    //  }
+    // });
+	
 };
