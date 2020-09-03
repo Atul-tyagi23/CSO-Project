@@ -8,28 +8,30 @@ const express = require('express'),
 // Get all users
 exports.getAllUsers = (req, res) => {
 	// find all users
-	User.find({}).lean().then(
-		(users) => {
-			// if error then 4xx or 5xx codes
-			if (!users) {
-				return res.status(500).json({ error: 'Server error' });
+	User.find({})
+		.lean()
+		.then(
+			(users) => {
+				// if error then 4xx or 5xx codes
+				if (!users) {
+					return res.status(500).json({ error: 'Server error' });
+				}
+				// if length is 0 then 404 error as not found
+				if (users.length === 0) {
+					return res.status(404).json({ error: 'No users  found' });
+				}
+				// if found then send with 200 code the users  in json form
+				return res.status(200).json({
+					users,
+				});
+			},
+			(err) => {
+				// if error then 4xx or 5xx codes
+				if (err) {
+					return res.status(500).json({ error: err });
+				}
 			}
-			// if length is 0 then 404 error as not found
-			if (users.length === 0) {
-				return res.status(404).json({ error: 'No users  found' });
-			}
-			// if found then send with 200 code the users  in json form
-			return res.status(200).json({
-				users,
-			});
-		},
-		(err) => {
-			// if error then 4xx or 5xx codes
-			if (err) {
-				return res.status(500).json({ error: err });
-			}
-		}
-	);
+		);
 };
 
 var cloudinary = require('cloudinary');
@@ -63,24 +65,26 @@ exports.newUser = async (req, res) => {
 		newUser.isAdmin = true;
 	}
 
-	User.findOne({ email: req.body.email }).lean().exec((err, sameUser) => {
-		if (err) {
-			return res.status(500).json({ error: 'Server error' });
-		} // checking if same email exists in DB or not
-		if (sameUser) {
-			return res.status(400).json({ error: `Email address already registered. Please login instead` });
-		} else {
-			User.register(newUser, req.body.password, (err, user) => {
-				if (err) {
-					return res.status(500).json({ error: 'Cannot create user' });
-				} else {
-					passport.authenticate('local')(req, res, () => {
-						return res.status(200).json({ message: 'Welcome to website: ' + req.body.username });
-					});
-				}
-			});
-		}
-	});
+	User.findOne({ email: req.body.email })
+		.lean()
+		.exec((err, sameUser) => {
+			if (err) {
+				return res.status(500).json({ error: 'Server error' });
+			} // checking if same email exists in DB or not
+			if (sameUser) {
+				return res.status(400).json({ error: `Email address already registered. Please login instead` });
+			} else {
+				User.register(newUser, req.body.password, (err, user) => {
+					if (err) {
+						return res.status(500).json({ error: 'Cannot create user' });
+					} else {
+						passport.authenticate('local')(req, res, () => {
+							return res.status(200).json({ message: 'Welcome to website: ' + req.body.username });
+						});
+					}
+				});
+			}
+		});
 };
 
 // Handling login
@@ -135,11 +139,6 @@ exports.updateUserInfo = async (req, res) => {
 			return res.status(500).json({ error: 'Server error' });
 		}
 		image_url = result.secure_url;
-		//   result =	await cloudinary.v2.uploader.upload(req.file.path, function (err, result) {
-		// 		if (err) {
-		// 		}
-		// 		image_url = result.secure_url;
-		// 	});
 	}
 
 	let update = {
@@ -172,51 +171,4 @@ exports.updateUserInfo = async (req, res) => {
 		}
 	}
 	return res.status(200).json({ message: 'Updated user credentials successfully.' });
-	// console.log('update is', update);
-
-    // await User.findById(req.params.id, (err, foundUser) => {
-    //  // storing previous user image
-    //  if (err) {
-    //      return res.status(500).json({ error: err });
-    //  }
-    //  image_url = foundUser['avatar'];
-    // });
-
-    // if (req.file) {
-    //  await cloudinary.v2.uploader.upload(req.file.path, function (err, result) {
-    //      if (err) {
-    //          return res.status(500).json({ error: 'Server error' });
-    //      }
-    //      image_url = result.secure_url;
-    //  });
-    // }
-
-    // update = {
-    //  name: req.body.name,
-    //  username: req.body.username,
-    //  image: image_url,
-    // };
-
-    // // find and update
-    // User.findByIdAndUpdate(req.params.id, update, (err, updatedUser) => {
-    //  // console.log(`update is`, update);
-    //  console.log(updatedUser);
-    //  if (err) {
-    //      console.log(err);
-    //      return res.status(500).json({ error: err.message });
-    //  } else {
-    //      if (req.body.oldpassword) {
-    //          // Password update
-    //          updatedUser.changePassword(req.body.oldpassword, req.body.newpassword, (err) => {
-    //              if (err) {
-    //                  console.log(err);
-    //                  return res.status(500).json({ error: err.message });
-    //              }
-    //          });
-    //      }
-
-    //      return res.status(200).json({ message: 'Successfully updated' });
-    //  }
-    // });
-	
 };
