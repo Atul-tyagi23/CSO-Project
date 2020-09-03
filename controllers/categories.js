@@ -33,7 +33,7 @@ exports.createCategory = (req, res) => {
 	// request data from user
  
 	// find a category
-	Category.findOne({ name: req.body.name }).exec((err, category) => {
+	Category.findOne({ name: req.body.name }).lean().exec((err, category) => {
 		// send back response with 4xx or 5xx error codes if error occurs
 		if (err) {
 			return res.status(500).json({ error: 'Server error' });

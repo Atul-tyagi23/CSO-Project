@@ -8,7 +8,7 @@ const express = require('express'),
 // Get all users
 exports.getAllUsers = (req, res) => {
 	// find all users
-	User.find({}).then(
+	User.find({}).lean().then(
 		(users) => {
 			// if error then 4xx or 5xx codes
 			if (!users) {
@@ -63,7 +63,7 @@ exports.newUser = async (req, res) => {
 		newUser.isAdmin = true;
 	}
 
-	User.findOne({ email: req.body.email }).exec((err, sameUser) => {
+	User.findOne({ email: req.body.email }).lean().exec((err, sameUser) => {
 		if (err) {
 			return res.status(500).json({ error: 'Server error' });
 		} // checking if same email exists in DB or not
