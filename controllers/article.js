@@ -18,7 +18,7 @@ exports.createArticle = async (req, res) => {
 	let category = categories.split(',');
 
 	try {
-		isArticleThere = await Article.findOne({ slug: generatedSlug });
+		isArticleThere = await Article.findOne({ slug: generatedSlug }).lean().exec();
 	} catch (error) {
 		return res.status(500).json({ message: error.message });
 	}
@@ -60,7 +60,7 @@ exports.createArticle = async (req, res) => {
 exports.allArticles = async (req, res) => {
 	let articles;
 	try {
-		articles = await Article.find({});
+		articles = await Article.find({}).lean().exec();
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({ message: 'Error in fetching articles' });

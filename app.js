@@ -3,12 +3,15 @@ const express = require('express'),
 	mongoose = require('mongoose'),
 	Article = require('./models/article'),
 	passport = require('passport');
-localStrategy = require('passport-local');
-(User = require('./models/user')), (cors = require('cors'));
+const localStrategy = require('passport-local');
+const helmet = require('helmet');
+const User = require('./models/user');
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
 app.use(cors());
+app.use(helmet());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

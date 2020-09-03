@@ -3,7 +3,7 @@ const Category = require('../models/category');
 exports.getAllCategories = (req, res) => {
 
 	// find all categories
-	Category.find({}).then((categories) => {
+	Category.find({}).lean().then((categories) => {
 
 		// if error then 4xx or 5xx codes
 		if (!categories) {
