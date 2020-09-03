@@ -5,6 +5,9 @@ const express = require('express'),
 	localStrategy = require('passport-local'),
 	userModule = require('../controllers/user');
 
+const cloudinary = require('cloudinary');
+const createToken = require('../helpers/auth');
+
 // Get all users
 exports.getAllUsers = (req, res) => {
 	// find all users
@@ -34,7 +37,6 @@ exports.getAllUsers = (req, res) => {
 		);
 };
 
-var cloudinary = require('cloudinary');
 cloudinary.config({
 	cloud_name: 'dr6pkartq',
 	api_key: process.env.CLOUDINARY_API_KEY,
@@ -79,7 +81,8 @@ exports.newUser = async (req, res) => {
 						return res.status(500).json({ error: 'Cannot create user' });
 					} else {
 						passport.authenticate('local')(req, res, () => {
-							return res.status(200).json({ message: 'Welcome to website: ' + req.body.username });
+							let token = createToken({ id: newUser.id, username: newUser.username });
+							return res.status(200).json({ message: 'Welcome to website: ' + req.body.username, token });
 						});
 					}
 				});
@@ -100,7 +103,8 @@ exports.doLogin = (req, res, next) => {
 			if (err) {
 				return res.status(500).json({ error: err });
 			}
-			return res.status(200).json({ message: 'Successfully logged In!!' });
+			let token = createToken({ id: user.id, username: user.username });
+			return res.status(200).json({ token, message: 'Successfully logged In!!' });
 		});
 	})(req, res, next);
 };
