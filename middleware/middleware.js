@@ -17,7 +17,7 @@ middlewareObj.checkUserOwnership = async (req, res, next)=> {
         if (!foundUser) {
             return res.status(500).json({ message: 'Error in updating user' });
         }
-        if(foundUser.id.equals(req.user._id))
+        if(foundUser._id.equals(req.user._id))
         {
             next(); 
         }

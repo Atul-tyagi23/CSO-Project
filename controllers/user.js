@@ -7,6 +7,8 @@ const express = require('express'),
 
 const cloudinary = require('cloudinary');
 const createToken = require('../helpers/auth');
+const slugify = require('slugify');
+
 
 // Get all users
 exports.getAllUsers = (req, res) => {
@@ -67,27 +69,51 @@ exports.newUser = async (req, res) => {
 		newUser.isAdmin = true;
 	}
 
-	User.findOne({ email: req.body.email })
-		.lean()
-		.exec((err, sameUser) => {
-			if (err) {
-				return res.status(500).json({ error: 'Server error' });
-			} // checking if same email exists in DB or not
-			if (sameUser) {
-				return res.status(400).json({ error: `Email address already registered. Please login instead` });
-			} else {
-				User.register(newUser, req.body.password, (err, user) => {
-					if (err) {
-						return res.status(500).json({ error: 'Cannot create user' });
-					} else {
-						passport.authenticate('local')(req, res, () => {
-							let token = createToken({ id: newUser.id, username: newUser.username });
-							return res.status(200).json({ message: 'Welcome to website: ' + req.body.username, token });
-						});
-					}
-				});
-			}
-		});
+	let sameUser ;
+	
+	try{
+		  sameUser = await User.findOne({ email: req.body.email }).exec();
+	}
+	catch(error){	
+	 	return res.status(500).json({ error: 'Server error' });
+	}
+
+	if(sameUser){
+	    return res.status(400).json({ error: `Email address already registered. Please login instead` });
+	}
+
+    User.register(newUser, req.body.password, (err, newUser) => {
+		if (err) {
+			return res.status(500).json({ error: 'Cannot create user' });
+		} else {
+				passport.authenticate('local')(req, res, () => {
+			 	let token = createToken({ id: newUser.id, username: newUser.username });
+				return res.status(200).json({ message: 'Welcome to website: ' + req.body.username, token });
+			});
+		}
+	});
+
+	// User.findOne({ email: req.body.email })
+	// 	.lean()
+	// 	.exec((err, sameUser) => {
+	// 		if (err) {
+	// 			return res.status(500).json({ error: 'Server error' });
+	// 		} // checking if same email exists in DB or not
+	// 		if (sameUser) {
+	// 			return res.status(400).json({ error: `Email address already registered. Please login instead` });
+	// 		} else {
+	// 			User.register(newUser, req.body.password, (err, newUser) => {
+	// 				if (err) {
+	// 					return res.status(500).json({ error: 'Cannot create user' });
+	// 				} else {
+	// 					passport.authenticate('local')(req, res, () => {
+	// 					 	let token = createToken({ id: newUser.id, username: newUser.username });
+	// 						return res.status(200).json({ message: 'Welcome to website: ' + req.body.username, token });
+	// 					});
+	// 				}
+	// 			});
+	// 		}
+	// 	});
 };
 
 // Handling login
@@ -151,6 +177,12 @@ exports.updateUserInfo = async (req, res) => {
 		avatar: image_url,
 		about: req.body.about,
 	};
+	if(!req.body.username)
+	update.username = existingUser['username'];
+	if(!req.body.name)
+	update.name = existingUser['name'];
+	if(!req.body.about)
+	update.about = existingUser['about']
 
 	let updatedUser;
 
@@ -169,8 +201,13 @@ exports.updateUserInfo = async (req, res) => {
 		try {
 			result = await updatedUser.changePassword(req.body.oldpassword, req.body.newpassword);
 		} catch (error) {
+			console.log(error)
+			console.log(req.body.oldpassword);
+			console.log(req.body.newpassword);		
 			if (error.message === 'Password or username is incorrect') {
-				return res.status(400).json({ error: 'Please enter valid old password to reset your password' });
+				return res.status(400).json({ error: 'Password or username is incorrect' });
+			}else {
+				return res.status(400).json({error: error.message});
 			}
 		}
 	}
