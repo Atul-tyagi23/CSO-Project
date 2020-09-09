@@ -86,7 +86,12 @@ exports.newUser = async (req, res) => {
 			return res.status(500).json({ error: 'Cannot create user' });
 		} else {
 			passport.authenticate('local')(req, res, () => {
-				let token = createToken({ id: newUser.id, username: newUser.username, email: newUser.email });
+				let token = createToken({
+					id: newUser.id,
+					username: newUser.username,
+					email: newUser.email,
+					avatar: newUser.avatar,
+				});
 				return res.status(200).json({ message: 'Welcome to website: ' + req.body.username, token });
 			});
 		}
@@ -128,8 +133,13 @@ exports.doLogin = (req, res, next) => {
 			if (err) {
 				return res.status(500).json({ error: err });
 			}
-			let token = createToken({ id: newUser.id, username: newUser.username, email: newUser.email });
-			return res.status(200).json({ token, message: 'Successfully logged In!!' });
+			let token = createToken({
+				id: user.id,
+				username: user.username,
+				email: user.email,
+				avatar: user.avatar,
+			});
+			return res.status(200).json({ token, message: 'Successfully logged In!!', avatar: user.avatar });
 		});
 	})(req, res, next);
 };
@@ -207,32 +217,32 @@ exports.updateUserInfo = async (req, res) => {
 			}
 		}
 	}
-	token = createToken({ id: updatedUser.id, username: updatedUser.username, email: updatedUser.email });
+	token = createToken({
+		id: updatedUser.id,
+		username: updatedUser.username,
+		email: updatedUser.email,
+		avatar: updatedUser.avatar,
+	});
 	return res.status(200).json({ message: 'Updated user credentials successfully.', token });
 };
 
-// Get single user detail 
+// Get single user detail
 
-exports.getDetails = async (req, res)=>{
+exports.getDetails = async (req, res) => {
 	try {
-	foundUser = await User.findById(req.params.id);
+		foundUser = await User.findById(req.params.id);
+	} catch (error) {
+		return res.status(503).json({ message: 'Server Unreachable. Try again later' });
 	}
-     catch (error) {
-	return res.status(503).json({ message: 'Server Unreachable. Try again later' });
-	}
-	
-	if(!foundUser){
+
+	if (!foundUser) {
 		return res.status(500).json({ message: 'User not found' });
 	}
 	let userInfo = {
-		email : foundUser['email'],
-		about : foundUser['about'],
-		image : foundUser['avatar']
-	}
+		email: foundUser['email'],
+		about: foundUser['about'],
+		image: foundUser['avatar'],
+	};
 
-	return res.status(200).json({ userInfo: userInfo,});
-
-
-
-
-}
+	return res.status(200).json({ userInfo: userInfo });
+};
