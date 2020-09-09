@@ -47,4 +47,8 @@ router.post('/login', userModule.doLogin);
 // Logout route
 router.get('/logout', userModule.doLogout);
 
+// Get user info 
+
+router.get('/profile/:id', userModule.getDetails);
+
 module.exports = router;

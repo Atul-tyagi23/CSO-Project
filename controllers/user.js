@@ -8,6 +8,7 @@ const express = require('express'),
 const cloudinary = require('cloudinary');
 const { createToken, decodeToken } = require('../helpers/auth');
 const slugify = require('slugify');
+const { Router } = require('express');
 
 // Get all users
 exports.getAllUsers = (req, res) => {
@@ -209,3 +210,29 @@ exports.updateUserInfo = async (req, res) => {
 	token = createToken({ id: updatedUser.id, username: updatedUser.username, email: updatedUser.email });
 	return res.status(200).json({ message: 'Updated user credentials successfully.', token });
 };
+
+// Get single user detail 
+
+exports.getDetails = async (req, res)=>{
+	try {
+	foundUser = await User.findById(req.params.id);
+	}
+     catch (error) {
+	return res.status(503).json({ message: 'Server Unreachable. Try again later' });
+	}
+	
+	if(!foundUser){
+		return res.status(500).json({ message: 'User not found' });
+	}
+	let userInfo = {
+		email : foundUser['email'],
+		about : foundUser['about'],
+		image : foundUser['avatar']
+	}
+
+	return res.status(200).json({ userInfo: userInfo,});
+
+
+
+
+}
