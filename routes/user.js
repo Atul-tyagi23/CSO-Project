@@ -1,4 +1,3 @@
- 
 const express = require('express'),
 	router = express.Router(),
 	mongoose = require('mongoose'),
@@ -30,11 +29,17 @@ var upload = multer({ storage: storage, fileFilter: imageFilter });
 router.get('/', userModule.getAllUsers);
 
 // Sign up route
- router.post('/register', upload.single('image'), userModule.newUser);
+router.post('/register', upload.single('image'), userModule.newUser);
 
 // Edit user info route
 
-router.put('/:id', middlewareObj.checkUserOwnership , upload.single('image'), userModule.updateUserInfo) ;
+router.put(
+	'/edit/:id',
+	middlewareObj.checkUserOwnership,
+	middlewareObj.extractAuthToken,
+	upload.single('image'),
+	userModule.updateUserInfo
+);
 
 // Login route
 router.post('/login', userModule.doLogin);

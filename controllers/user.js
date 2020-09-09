@@ -6,7 +6,7 @@ const express = require('express'),
 	userModule = require('../controllers/user');
 
 const cloudinary = require('cloudinary');
-const createToken = require('../helpers/auth');
+const { createToken, decodeToken } = require('../helpers/auth');
 const slugify = require('slugify');
 
 // Get all users
