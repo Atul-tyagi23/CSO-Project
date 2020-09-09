@@ -30,7 +30,7 @@ var UserSchema = new mongoose.Schema(
 		avatar: {
 			type: String,
 			default:
-				'https://images.discordapp.net/avatars/503791976706211840/f7e48fdce47da3cc760a7eff444f93cc.png?size=512',
+				'https://res.cloudinary.com/dr6pkartq/image/upload/v1599653070/cuwmqrs5zilbmkchik3i.png',
 		},
 		articles: [
 			{
