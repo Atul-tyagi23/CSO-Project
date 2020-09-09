@@ -191,7 +191,7 @@ exports.updateUserInfo = async (req, res) => {
 	if (!updatedUser) {
 		return res.status(500).json({ message: 'Error in updating user' });
 	}
-	let result;
+	let result, token;
 	if (req.body.oldpassword) {
 		try {
 			result = await updatedUser.changePassword(req.body.oldpassword, req.body.newpassword);
@@ -206,5 +206,6 @@ exports.updateUserInfo = async (req, res) => {
 			}
 		}
 	}
-	return res.status(200).json({ message: 'Updated user credentials successfully.' });
+	token = createToken({ id: updatedUser.id, username: updatedUser.username, email: updatedUser.email });
+	return res.status(200).json({ message: 'Updated user credentials successfully.', token });
 };
