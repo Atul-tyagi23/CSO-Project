@@ -9,7 +9,6 @@ const cloudinary = require('cloudinary');
 const createToken = require('../helpers/auth');
 const slugify = require('slugify');
 
-
 // Get all users
 exports.getAllUsers = (req, res) => {
 	// find all users
@@ -69,25 +68,24 @@ exports.newUser = async (req, res) => {
 		newUser.isAdmin = true;
 	}
 
-	let sameUser ;
-	
-	try{
-		  sameUser = await User.findOne({ email: req.body.email }).exec();
-	}
-	catch(error){	
-	 	return res.status(500).json({ error: 'Server error' });
+	let sameUser;
+
+	try {
+		sameUser = await User.findOne({ email: req.body.email }).exec();
+	} catch (error) {
+		return res.status(500).json({ error: 'Server error' });
 	}
 
-	if(sameUser){
-	    return res.status(400).json({ error: `Email address already registered. Please login instead` });
+	if (sameUser) {
+		return res.status(400).json({ error: `Email address already registered. Please login instead` });
 	}
 
-    User.register(newUser, req.body.password, (err, newUser) => {
+	User.register(newUser, req.body.password, (err, newUser) => {
 		if (err) {
 			return res.status(500).json({ error: 'Cannot create user' });
 		} else {
-				passport.authenticate('local')(req, res, () => {
-			 	let token = createToken({ id: newUser.id, username: newUser.username });
+			passport.authenticate('local')(req, res, () => {
+				let token = createToken({ id: newUser.id, username: newUser.username, email: newUser.email });
 				return res.status(200).json({ message: 'Welcome to website: ' + req.body.username, token });
 			});
 		}
@@ -129,7 +127,7 @@ exports.doLogin = (req, res, next) => {
 			if (err) {
 				return res.status(500).json({ error: err });
 			}
-			let token = createToken({ id: user.id, username: user.username });
+			let token = createToken({ id: newUser.id, username: newUser.username, email: newUser.email });
 			return res.status(200).json({ token, message: 'Successfully logged In!!' });
 		});
 	})(req, res, next);
@@ -177,12 +175,9 @@ exports.updateUserInfo = async (req, res) => {
 		avatar: image_url,
 		about: req.body.about,
 	};
-	if(!req.body.username)
-	update.username = existingUser['username'];
-	if(!req.body.name)
-	update.name = existingUser['name'];
-	if(!req.body.about)
-	update.about = existingUser['about']
+	if (!req.body.username) update.username = existingUser['username'];
+	if (!req.body.name) update.name = existingUser['name'];
+	if (!req.body.about) update.about = existingUser['about'];
 
 	let updatedUser;
 
@@ -201,13 +196,13 @@ exports.updateUserInfo = async (req, res) => {
 		try {
 			result = await updatedUser.changePassword(req.body.oldpassword, req.body.newpassword);
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 			console.log(req.body.oldpassword);
-			console.log(req.body.newpassword);		
+			console.log(req.body.newpassword);
 			if (error.message === 'Password or username is incorrect') {
 				return res.status(400).json({ error: 'Password or username is incorrect' });
-			}else {
-				return res.status(400).json({error: error.message});
+			} else {
+				return res.status(400).json({ error: error.message });
 			}
 		}
 	}
