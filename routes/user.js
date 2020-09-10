@@ -11,6 +11,7 @@ require('dotenv').config();
 
 var multer = require('multer');
 const { update } = require('../models/user');
+const { checkUserOwnership } = require('../middleware/middleware');
 var storage = multer.diskStorage({
 	filename: function (req, file, callback) {
 		callback(null, Date.now() + file.originalname);
@@ -50,5 +51,9 @@ router.get('/logout', userModule.doLogout);
 // Get user info 
 
 router.get('/profile/:username', userModule.getDetails);
+
+// Change user password
+
+router.put('/editpassword/:id', middlewareObj.checkUserOwnership, userModule.changePassword)
 
 module.exports = router;

@@ -203,20 +203,20 @@ exports.updateUserInfo = async (req, res) => {
 		return res.status(500).json({ message: 'Error in updating user' });
 	}
 	let result, token;
-	if (req.body.oldpassword) {
-		try {
-			result = await updatedUser.changePassword(req.body.oldpassword, req.body.newpassword);
-		} catch (error) {
-			console.log(error);
-			console.log(req.body.oldpassword);
-			console.log(req.body.newpassword);
-			if (error.message === 'Password or username is incorrect') {
-				return res.status(400).json({ error: 'Password or username is incorrect' });
-			} else {
-				return res.status(400).json({ error: error.message });
-			}
-		}
-	}
+	// if (req.body.oldpassword) {
+	// 	try {
+	// 		result = await updatedUser.changePassword(req.body.oldpassword, req.body.newpassword);
+	// 	} catch (error) {
+	// 		console.log(error);
+	// 		console.log(req.body.oldpassword);
+	// 		console.log(req.body.newpassword);
+	// 		if (error.message === 'Password or username is incorrect') {
+	// 			return res.status(400).json({ error: 'Password or username is incorrect' });
+	// 		} else {
+	// 			return res.status(400).json({ error: error.message });
+	// 		}
+	// 	}
+	// }
 	token = createToken({
 		id: updatedUser.id,
 		username: updatedUser.username,
@@ -250,3 +250,36 @@ exports.getDetails = async (req, res) => {
 
 	return res.status(200).json({ userInfo: userInfo });
 };
+
+// Changing user password 
+
+exports.changePassword = async (req, res)=>{
+	let foundUser;
+	try {
+		foundUser = await User.findById(req.params.id);
+	} catch (error) {
+		return res.status(503).json({ message: 'Server Unreachable. Try again later' });
+	}
+	if (!foundUser) {
+		return res.status(404).json({ message: 'User not found' });
+	}
+	console.log(req.body.oldpassword);
+
+
+	try {
+		result = await foundUser.changePassword(req.body.oldpassword, req.body.newpassword);
+	} catch (error) {
+		console.log(error);
+		console.log(req.body.oldpassword);
+		console.log(req.body.newpassword);
+		if (error.message === 'Password or username is incorrect') {
+			return res.status(400).json({ error: 'Password or username is incorrect' });
+		} else {
+			return res.status(400).json({ error: error.message });
+		}
+	}
+
+	return res.status(200).json({ message: 'Password updated successfully! Please login again.'});
+
+
+}
