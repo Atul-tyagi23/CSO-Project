@@ -229,16 +229,20 @@ exports.updateUserInfo = async (req, res) => {
 // Get single user detail
 
 exports.getDetails = async (req, res) => {
+	let foundUser;
 	try {
-		foundUser = await User.findById(req.params.id);
+		foundUser = await User.findOne({ username: req.params.username }).lean().exec();
 	} catch (error) {
 		return res.status(503).json({ message: 'Server Unreachable. Try again later' });
 	}
 
 	if (!foundUser) {
-		return res.status(500).json({ message: 'User not found' });
+		return res.status(404).json({ message: 'User not found' });
 	}
 	let userInfo = {
+		id: foundUser['_id'],
+		username: foundUser['username'],
+		name: foundUser['name'],
 		email: foundUser['email'],
 		about: foundUser['about'],
 		image: foundUser['avatar'],
