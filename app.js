@@ -1,10 +1,8 @@
 const express = require('express'),
 	bodyParser = require('body-parser'),
 	mongoose = require('mongoose'),
-	Article = require('./models/article'),
-	passport = require('passport');
-const localStrategy = require('passport-local');
-const helmet = require('helmet');
+	Article = require('./models/article');
+ const helmet = require('helmet');
 const User = require('./models/user');
 const cors = require('cors');
 require('dotenv').config();
@@ -15,24 +13,9 @@ app.use(helmet());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// PASSPORT CONFIGURATION
-app.use(
-	require('express-session')({
-		secret: 'Secrets of Prisons',
-		resave: false,
-		saveUninitialized: false,
-		cookie:{
-			maxAge: 24*60*60*1000, // Added 1 day until cookie expires 
-		}
-	})
-);
 
-app.use(passport.initialize());
-app.use(passport.session());
 
-passport.use(new localStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+
 
 // importing routes
 const categoryRoutes = require('./routes/categories');
