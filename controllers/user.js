@@ -193,7 +193,7 @@ exports.updateUserInfo = async (req, res) => {
 	let updatedUser;
 
 	try {
-		updatedUser = await User.findByIdAndUpdate(req.params.id, update, { new: true }).exec();
+		updatedUser = await User.findByIdAndUpdate(req.user._id, update, { new: true }).exec();
 	} catch (error) {
 		// console.log(error);
 		return res.status(500).json({ message: 'Could not update user' });
@@ -279,7 +279,7 @@ exports.changePassword = async (req, res)=>{
 		}
 	}
 
-	return res.status(200).json({ message: 'Password updated successfully! Please login again.'});
+	return res.status(200).json({ message: 'Password updated successfully! Please login againg.'});
 
 
 }
