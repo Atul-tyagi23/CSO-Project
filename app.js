@@ -31,17 +31,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(new localStrategy(User.authenticate()));
-passport.serializeUser((user, cb) => {
-    cb(null, user.id);
-  });
-  passport.deserializeUser((id, cb) => {
-    User.findOne({ _id: id }, (err, user) => {
-      const userInformation = {
-        username: user.username,
-      };
-      cb(err, userInformation);
-    });
-  });
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // importing routes
 const categoryRoutes = require('./routes/categories');
