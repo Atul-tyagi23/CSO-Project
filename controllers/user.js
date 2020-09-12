@@ -13,7 +13,6 @@ const { Router } = require('express');
 // Get all users
 exports.getAllUsers = (req, res) => {
 	// find all users
-	console.log(req.sessionStore.sessions);
 	User.find({})
 		.lean()
 		.then(
@@ -156,7 +155,6 @@ exports.doLogout = (req, res) => {
 // Updating user info
 exports.updateUserInfo = async (req, res) => {
 	let image_url;
-	console.log(req.body);
 
 	let existingUser;
 
@@ -193,11 +191,12 @@ exports.updateUserInfo = async (req, res) => {
 	if (!req.body.about) update.about = existingUser['about'];
 
 	let updatedUser;
-
+	console.log(req.user._id);
+;
 	try {
 		updatedUser = await User.findByIdAndUpdate(req.user._id, update, { new: true }).exec();
 	} catch (error) {
-		console.log(error);
+		// console.log(error);
 		return res.status(500).json({ message: 'Could not update user' });
 	}
 
@@ -205,6 +204,20 @@ exports.updateUserInfo = async (req, res) => {
 		return res.status(500).json({ message: 'Error in updating user' });
 	}
 	let result, token;
+	// if (req.body.oldpassword) {
+	// 	try {
+	// 		result = await updatedUser.changePassword(req.body.oldpassword, req.body.newpassword);
+	// 	} catch (error) {
+	// 		console.log(error);
+	// 		console.log(req.body.oldpassword);
+	// 		console.log(req.body.newpassword);
+	// 		if (error.message === 'Password or username is incorrect') {
+	// 			return res.status(400).json({ error: 'Password or username is incorrect' });
+	// 		} else {
+	// 			return res.status(400).json({ error: error.message });
+	// 		}
+	// 	}
+	// }
 	token = createToken({
 		id: updatedUser.id,
 		username: updatedUser.username,
@@ -239,12 +252,12 @@ exports.getDetails = async (req, res) => {
 	return res.status(200).json({ userInfo: userInfo });
 };
 
-// Changing user password
+// Changing user password 
 
-exports.changePassword = async (req, res) => {
+exports.changePassword = async (req, res)=>{
 	let foundUser;
 	try {
-		foundUser = await User.findOne({username:req.params.username});
+		foundUser = await User.findById(req.params.id);
 	} catch (error) {
 		return res.status(503).json({ message: 'Server Unreachable. Try again later' });
 	}
@@ -253,7 +266,7 @@ exports.changePassword = async (req, res) => {
 	}
 	console.log(req.body.oldpassword);
 
-	let result;
+
 	try {
 		result = await foundUser.changePassword(req.body.oldpassword, req.body.newpassword);
 	} catch (error) {
@@ -267,12 +280,7 @@ exports.changePassword = async (req, res) => {
 		}
 	}
 
-<<<<<<< HEAD
 	return res.status(200).json({ message: 'Password updated successfully! Please login againg.'});
 
 
 }
-=======
-	return res.status(200).json({ message: 'Password updated successfully! Please login again.' });
-};
->>>>>>> 8d02c904b41db8dd03c81b243c58efaf2a6456e0
