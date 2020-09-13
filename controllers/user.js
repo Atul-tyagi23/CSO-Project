@@ -265,7 +265,9 @@ exports.updateUserInfo = async (req, res) => {
 		email: updatedUser.email,
 		avatar: updatedUser.avatar,
 	});
-	return res.status(200).json({ message: 'Updated user credentials successfully.', token });
+	return res
+		.status(200)
+		.json({ message: 'Updated user credentials successfully.', token, username: updatedUser.username });
 };
 
 // Get single user detail
