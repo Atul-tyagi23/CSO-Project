@@ -1,7 +1,7 @@
 const express = require('express'),
 	mongoose = require('mongoose'),
- 	User = require('../models/user'),
- 	userModule = require('../controllers/user');
+	User = require('../models/user'),
+	userModule = require('../controllers/user');
 const cloudinary = require('cloudinary');
 const { createToken, decodeToken } = require('../helpers/auth');
 const slugify = require('slugify');
@@ -46,8 +46,7 @@ cloudinary.config({
 // Handling Signup
 
 exports.newUser = async (req, res) => {
-	
-    // Chech for same email
+	// Chech for same email
 	let sameUser;
 
 	try {
@@ -59,8 +58,8 @@ exports.newUser = async (req, res) => {
 	if (sameUser) {
 		return res.status(400).json({ error: `Email already registered. Please login with different email` });
 	}
-    //Check for same Username 
-  
+	//Check for same Username
+
 	try {
 		sameUser = await User.findOne({ username: req.body.username }).exec();
 	} catch (error) {
@@ -70,9 +69,7 @@ exports.newUser = async (req, res) => {
 	if (sameUser) {
 		return res.status(400).json({ error: `Username  already registered. Please login with different username` });
 	}
-	
 
-	
 	let image_url;
 	if (req.file) {
 		let result;
@@ -85,47 +82,35 @@ exports.newUser = async (req, res) => {
 	}
 
 	//Hash password
-	try{
-		hashedPassword = await bcrypt.hash(req.body.password, 10)
+	let hashedPassword;
+	try {
+		hashedPassword = await bcrypt.hash(req.body.password, 12);
+	} catch (error) {
+		return res.status(500).json({ error: error });
 	}
-	catch(error){
-		return res.status(500).json({error: error});
-	}
-
 
 	const newUser = new User({
 		username: req.body.username,
 		name: req.body.name,
 		email: req.body.email,
 		avatar: image_url,
-		password: hashedPassword
+		password: hashedPassword,
 	});
-	let savedUser; 
-	try{
-		 savedUser = newUser.save()
+	let savedUser;
+	try {
+		savedUser = newUser.save();
+	} catch (error) {
+		res.status(500).json({ error: 'Cannot create user!' });
 	}
-	catch(error){
-		res.status(500).json({error: 'Cannot create user!'});
-	}
-	 
+
 	let token = createToken({
 		id: newUser.id,
-	 	username: newUser.username,
+		username: newUser.username,
 		email: newUser.email,
 		avatar: newUser.avatar,
 	});
 
-	
-	
-	
-	return res.status(200).json({message: "Successfully Signed up!", token});
-
-
-
-
-
-
-
+	return res.status(200).json({ message: 'Successfully Signed up!', token });
 
 	// User.register(newUser, req.body.password, (err, newUser) => {
 	// 	if (err) {
@@ -142,46 +127,40 @@ exports.newUser = async (req, res) => {
 	// 		});
 	// 	}
 	// });
-
 };
 
 // Handling login
 exports.doLogin = async (req, res, next) => {
 	let sameUser;
- 
+
 	try {
 		sameUser = await User.findOne({ username: req.body.username }).exec();
 	} catch (error) {
 		return res.status(500).json({ error: 'Server error' });
 	}
-	if(!sameUser){
-		return res.status(400).json({error: 'User with given username does not exists'})
+	if (!sameUser) {
+		return res.status(400).json({ error: 'User with given username does not exists' });
 	}
-
 
 	//Password is correct ?
 	let validUser;
-	try{
-		  validUser = await bcrypt.compare(req.body.password, sameUser.password);
-	}
-	catch(error){
+	try {
+		validUser = await bcrypt.compare(req.body.password, sameUser.password);
+	} catch (error) {
 		return res.status(500).json({ error: 'Server error' });
-
 	}
-	if(!validUser){
+	if (!validUser) {
 		return res.status(400).json({ error: 'Incorrect password' });
 	}
 
 	let token = createToken({
 		id: validUser.id,
-	 	username: validUser.username,
+		username: validUser.username,
 		email: validUser.email,
 		avatar: validUser.avatar,
 	});
 
-
 	return res.status(200).json({ message: 'Logged you in!', token });
-
 
 	// passport.authenticate('local', function (err, user, info) {
 	// 	if (err) {
@@ -207,33 +186,27 @@ exports.doLogout = (req, res) => {
 
 // Updating user info
 exports.updateUserInfo = async (req, res) => {
- 
-	
 	let image_url;
 	//console.log(req.body);
 
 	let existingUser;
 
-
 	try {
-		existingUser = await User.findOne({username: req.params.username}).exec();
+		existingUser = await User.findOne({ username: req.params.username }).exec();
 	} catch (error) {
 		return res.status(503).json({ message: 'Server Unreachable. Try again later' });
 	}
-	// Verifying password 
+	// Verifying password
 
 	let validUser;
-	try{
+	try {
 		validUser = await bcrypt.compare(req.body.oldpassword, existingUser.password);
-	}
-	catch(error){
+	} catch (error) {
 		return res.status(500).json({ error: 'Server error' });
-
 	}
-	if(!validUser){
+	if (!validUser) {
 		return res.status(400).json({ error: 'Incorrect password' });
 	}
-
 
 	if (!existingUser) {
 		return res.status(404).json({ message: 'User not found' });
@@ -257,19 +230,16 @@ exports.updateUserInfo = async (req, res) => {
 		avatar: image_url,
 		about: req.body.about,
 	};
-	if(req.body.newpassword){
-	//Hash new password
-	try{
-		hashedPassword = await bcrypt.hash(req.body.newpassword, 10)
+	let hashedPassword;
+	if (req.body.newpassword) {
+		//Hash new password
+		try {
+			hashedPassword = await bcrypt.hash(req.body.newpassword, 12);
+		} catch (error) {
+			return res.status(500).json({ error: error });
+		}
+		update.password = hashedPassword;
 	}
-	catch(error){
-		return res.status(500).json({error: error});
-	}
-	update.password = hashedPassword;
-	}
-
-
-
 
 	if (!req.body.username) update.username = existingUser['username'];
 	if (!req.body.name) update.name = existingUser['name'];
@@ -278,7 +248,7 @@ exports.updateUserInfo = async (req, res) => {
 	let updatedUser;
 
 	try {
-		updatedUser = await User.findOneAndUpdate({username : existingUser.username}, update, { new: true }).exec();
+		updatedUser = await User.findOneAndUpdate({ username: existingUser.username }, update, { new: true }).exec();
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({ message: 'Could not update user' });
