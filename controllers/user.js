@@ -10,7 +10,6 @@ const bcrypt = require('bcryptjs');
 // Get all users
 exports.getAllUsers = (req, res) => {
 	// find all users
-	console.log(req.sessionStore.sessions);
 	User.find({})
 		.lean()
 		.then(
@@ -154,10 +153,10 @@ exports.doLogin = async (req, res, next) => {
 	}
 
 	let token = createToken({
-		id: validUser.id,
-		username: validUser.username,
-		email: validUser.email,
-		avatar: validUser.avatar,
+		id: sameUser.id,
+		username: sameUser.username,
+		email: sameUser.email,
+		avatar: sameUser.avatar,
 	});
 
 	return res.status(200).json({ message: 'Logged you in!', token });
@@ -180,7 +179,7 @@ exports.doLogin = async (req, res, next) => {
 
 exports.doLogout = (req, res) => {
 	// clear req.user and clear the login session (if any)
-	req.logOut();
+	// req.logOut();
 	return res.status(200).json({ message: 'Logged you out!' });
 };
 
