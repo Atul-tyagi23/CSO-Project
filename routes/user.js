@@ -52,8 +52,5 @@ router.get('/logout', userModule.doLogout);
 
 router.get('/profile/:username', userModule.getDetails);
 
-// Change user password
-
-router.put('/editpassword/:username', middlewareObj.checkUserOwnership, userModule.changePassword)
 
 module.exports = router;

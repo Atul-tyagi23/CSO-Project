@@ -160,7 +160,7 @@ exports.doLogin = async (req, res, next) => {
 
 
 	//Password is correct ?
-	let valid
+	let validUser;
 	try{
 		  validUser = await bcrypt.compare(req.body.password, sameUser.password);
 	}
@@ -178,6 +178,7 @@ exports.doLogin = async (req, res, next) => {
 		email: validUser.email,
 		avatar: validUser.avatar,
 	});
+
 
 	return res.status(200).json({ message: 'Logged you in!', token });
 
@@ -206,16 +207,33 @@ exports.doLogout = (req, res) => {
 
 // Updating user info
 exports.updateUserInfo = async (req, res) => {
+ 
+	
 	let image_url;
 	//console.log(req.body);
 
 	let existingUser;
+
 
 	try {
 		existingUser = await User.findOne({username: req.params.username}).exec();
 	} catch (error) {
 		return res.status(503).json({ message: 'Server Unreachable. Try again later' });
 	}
+	// Verifying password 
+
+	let validUser;
+	try{
+		validUser = await bcrypt.compare(req.body.oldpassword, existingUser.password);
+	}
+	catch(error){
+		return res.status(500).json({ error: 'Server error' });
+
+	}
+	if(!validUser){
+		return res.status(400).json({ error: 'Incorrect password' });
+	}
+
 
 	if (!existingUser) {
 		return res.status(404).json({ message: 'User not found' });
@@ -239,6 +257,20 @@ exports.updateUserInfo = async (req, res) => {
 		avatar: image_url,
 		about: req.body.about,
 	};
+	if(req.body.newpassword){
+	//Hash new password
+	try{
+		hashedPassword = await bcrypt.hash(req.body.newpassword, 10)
+	}
+	catch(error){
+		return res.status(500).json({error: error});
+	}
+	update.password = hashedPassword;
+	}
+
+
+
+
 	if (!req.body.username) update.username = existingUser['username'];
 	if (!req.body.name) update.name = existingUser['name'];
 	if (!req.body.about) update.about = existingUser['about'];
@@ -291,32 +323,3 @@ exports.getDetails = async (req, res) => {
 };
 
 // Changing user password
-
-exports.changePassword = async (req, res) => {
-	let foundUser;
-	try {
-		foundUser = await User.findOne({username:req.params.username});
-	} catch (error) {
-		return res.status(503).json({ message: 'Server Unreachable. Try again later' });
-	}
-	if (!foundUser) {
-		return res.status(404).json({ message: 'User not found' });
-	}
-	console.log(req.body.oldpassword);
-
-	let result;
-	try {
-		result = await foundUser.changePassword(req.body.oldpassword, req.body.newpassword);
-	} catch (error) {
-		console.log(error);
-		console.log(req.body.oldpassword);
-		console.log(req.body.newpassword);
-		if (error.message === 'Password or username is incorrect') {
-			return res.status(400).json({ error: 'Password or username is incorrect' });
-		} else {
-			return res.status(400).json({ error: error.message });
-		}
-	}
-
-	return res.status(200).json({ message: 'Password updated successfully! Please login again.' });
-};
