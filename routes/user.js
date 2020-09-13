@@ -34,7 +34,7 @@ router.post('/register', upload.single('image'), userModule.newUser);
 
 // Edit user info route
 
-router.put(
+router.patch(
 	'/edit/:username',
 	middlewareObj.checkUserOwnership,
 	middlewareObj.extractAuthToken,

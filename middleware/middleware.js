@@ -38,7 +38,7 @@ middlewareObj.extractAuthToken = async (req, res, next) => {
 
 	// console.log(req.headers);
 	try {
-		token = req.header('authorization'); // Bearer token
+		token = req.header('authorization'); //token
 		if (!token) {
 			return res.status(401).json({ error: 'Unauthorized User ' });
 		}

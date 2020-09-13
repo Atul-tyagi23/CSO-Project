@@ -198,13 +198,15 @@ exports.updateUserInfo = async (req, res) => {
 	// Verifying password
 
 	let validUser;
-	try {
-		validUser = await bcrypt.compare(req.body.oldpassword, existingUser.password);
-	} catch (error) {
-		return res.status(500).json({ error: 'Server error' });
-	}
-	if (!validUser) {
-		return res.status(400).json({ error: 'Incorrect password' });
+	if (req.body.oldpassword) {
+		try {
+			validUser = await bcrypt.compare(req.body.oldpassword, existingUser.password);
+		} catch (error) {
+			return res.status(500).json({ error: 'Server error' });
+		}
+		if (!validUser) {
+			return res.status(400).json({ error: 'Incorrect password' });
+		}
 	}
 
 	if (!existingUser) {
