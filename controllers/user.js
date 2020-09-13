@@ -179,7 +179,7 @@ exports.doLogin = async (req, res, next) => {
 		avatar: validUser.avatar,
 	});
 
-	return res.status(200).json({message: "Successfully Logged In!", token});
+	return res.status(200).json({ message: 'Logged you in!', token });
 
 
 	// passport.authenticate('local', function (err, user, info) {
@@ -187,15 +187,7 @@ exports.doLogin = async (req, res, next) => {
 	// 		return res.status(500).json({ error: err.message });
 	// 	}
 	// 	if (!user) {
-	// 		return res.status(401).json({ error: 'Incorrect username or password' });
-	// 	}
-	// 	req.logIn(user, function (err) {
-	// 		if (err) {
-	// 			return res.status(500).json({ error: err });
-	// 		}
-	// 		let token = createToken({
-	// 			id: user.id,
-	// 			username: user.username,
+	// 		return res.status(401).jsoPOSTe,
 	// 			email: user.email,
 	// 			avatar: user.avatar,
 	// 		});
@@ -220,7 +212,7 @@ exports.updateUserInfo = async (req, res) => {
 	let existingUser;
 
 	try {
-		existingUser = await User.findById(req.params.username).exec();
+		existingUser = await User.findOne({username: req.params.username}).exec();
 	} catch (error) {
 		return res.status(503).json({ message: 'Server Unreachable. Try again later' });
 	}
@@ -254,7 +246,7 @@ exports.updateUserInfo = async (req, res) => {
 	let updatedUser;
 
 	try {
-		updatedUser = await User.findOneAndUpdate({username :req.params.username}, update, { new: true }).exec();
+		updatedUser = await User.findOneAndUpdate({username : existingUser.username}, update, { new: true }).exec();
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({ message: 'Could not update user' });

@@ -38,7 +38,7 @@ middlewareObj.extractAuthToken = async (req, res, next) => {
 
 	// console.log(req.headers);
 	try {
-		token = req.headers['authorization'].split(' ')[1]; // Bearer token
+		token = req.header('authorization'); // Bearer token
 		if (!token) {
 			return res.status(401).json({ error: 'Unauthorized User ' });
 		}
@@ -47,7 +47,7 @@ middlewareObj.extractAuthToken = async (req, res, next) => {
 			return res.status(401).json({ error: 'Not Authenticated' });
 		}
 		req.userData = { ...decodedToken };
-		next();
+		
 	} catch (error) {
 		return res.status(500).json({ error: 'Authentication failed. Please try again later' });
 	}
