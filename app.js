@@ -14,6 +14,8 @@ app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// disable powered by cookies 
+app.disable('x-powered-by');
 
 
 
