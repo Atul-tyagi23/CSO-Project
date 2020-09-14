@@ -37,6 +37,32 @@ var UserSchema = new mongoose.Schema(
 				ref: 'Article',
 			},
 		],
+		contactNumber: {
+			type: String,
+
+		},
+		github: {
+			type: String, 
+		},
+
+		facebook: {
+			type: String,
+		},
+
+		instagram: {
+			type: String,
+		},
+
+		twitter: {
+			type: String,
+
+		},
+
+		website: {
+			type: String,
+		},
+
+
 		isAdmin: { type: Boolean, default: false },
 	},
 	{
