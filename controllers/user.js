@@ -234,7 +234,7 @@ exports.updateUserInfo = async (req, res) => {
 		github: req.body.github,
 		facebook: req.body.facebook,
 		instagram: req.body.instagram,
-		twitter : req.body.twitter, 
+		twitter: req.body.twitter,
 	};
 	let hashedPassword;
 	if (req.body.newpassword) {
@@ -284,7 +284,7 @@ exports.updateUserInfo = async (req, res) => {
 exports.getDetails = async (req, res) => {
 	let foundUser;
 	try {
-		foundUser = await User.findOne({ username: req.params.username }).lean().exec();
+		foundUser = await User.findOne({ username: req.params.username }).select('-password').exec();
 	} catch (error) {
 		return res.status(503).json({ message: 'Server Unreachable. Try again later' });
 	}
@@ -292,14 +292,8 @@ exports.getDetails = async (req, res) => {
 	if (!foundUser) {
 		return res.status(404).json({ message: 'User not found' });
 	}
-	let userInfo = {
-		id: foundUser['_id'],
-		username: foundUser['username'],
-		name: foundUser['name'],
-		email: foundUser['email'],
-		about: foundUser['about'],
-		image: foundUser['avatar'],
-	};
+	// console.log(foundUser);
+	let userInfo = foundUser;
 
 	return res.status(200).json({ userInfo: userInfo });
 };
