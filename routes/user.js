@@ -41,7 +41,7 @@ router.patch(
 );
 
 // Login route
-router.post('/login', userModule.doLogin);
+router.post('/login',authValidators.loginValidator, runValidation, userModule.doLogin);
 
 // Logout route
 router.get('/logout', userModule.doLogout);

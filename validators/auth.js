@@ -11,4 +11,19 @@ const signupValidator = [
 		.withMessage('Password must be atleast 6 characters long'),
 ];
 
-module.exports = { signupValidator };
+const loginValidator = [
+	check('username').notEmpty().withMessage('No username given'),
+	check('password')
+	.notEmpty()
+	.withMessage('Password must be given')
+	.isLength({ min: 6 })
+	.withMessage('Password must be atleast 6 characters long'),
+];
+
+const userEditValidator = [
+  
+];
+
+
+
+module.exports = { signupValidator, loginValidator, userEditValidator };
