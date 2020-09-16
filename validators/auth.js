@@ -26,10 +26,10 @@ const loginValidator = [
 
 const userEditValidator = [
 
-	check("facebook").optional({checkFalsy: true}).matches(facebookExp).withMessage('Not a fb valid Url'),
-	check("github").optional({checkFalsy: true}).matches(Exp).withMessage('Not a valid Url'),
-	check("twitter").optional({checkFalsy: true}).matches(Exp).withMessage('Not a valid Url'),
-	check("instagram").optional({checkFalsy: true}).matches(Exp).withMessage('Not a valid Url'),
+	check("facebook").optional({checkFalsy: true}).matches(facebookExp).withMessage('Facebook account not found'),
+	check("github").optional({checkFalsy: true}).matches(Exp).withMessage('Github account not found'),
+	check("twitter").optional({checkFalsy: true}).matches(Exp).withMessage('Twitter account not found'),
+	check("instagram").optional({checkFalsy: true}).matches(Exp).withMessage('Instagram account not found'),
 
 	check('username')
 	.optional({checkFalsy: true, })
