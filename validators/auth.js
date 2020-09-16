@@ -26,14 +26,30 @@ const loginValidator = [
 
 const userEditValidator = [
 
-	check("facebook").optional({checkFalsy: true}).matches(facebookExp).withMessage('Facebook account not found'),
-	check("github").optional({checkFalsy: true}).matches(Exp).withMessage('Github account not found'),
-	check("twitter").optional({checkFalsy: true}).matches(Exp).withMessage('Twitter account not found'),
-	check("instagram").optional({checkFalsy: true}).matches(Exp).withMessage('Instagram account not found'),
+	check("facebook")
+	.optional({checkFalsy: true})
+	.matches(facebookExp).
+	withMessage('Facebook account not found'),
+	
+	check("github")
+	.optional({checkFalsy: true})
+	.matches(Exp)
+	.withMessage('Github account not found'),
+	
+	check("twitter")
+	.optional({checkFalsy: true})
+	.matches(Exp)
+	.withMessage('Twitter account not found'),
+	
+	check("instagram")
+	.optional({checkFalsy: true})
+	.matches(Exp)
+	.withMessage('Instagram account not found'),
 
 	check('username')
 	.optional({checkFalsy: true, })
-	.isLength({min:3}).withMessage('Min 3 characters required'), 
+	.isLength({min:3})
+	.withMessage('Min 3 characters required'), 
 	check('name')
 	.optional({checkFalsy: true, }),
 	check('about')
@@ -58,7 +74,9 @@ const userEditValidator = [
 	.custom((value, {req}) => (req.body.oldpassword))
 	.withMessage('Please Enter Current password'),
 
-	check('confirmpassword', 'New password not given!').custom((value, {req}) => (req.body.newpassword)),
+	check('confirmpassword')
+	.custom((value, {req}) => (req.body.newpassword))
+	.withMessage('New password not given ! '),
  	
  
 ];
