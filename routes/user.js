@@ -5,6 +5,7 @@ const express = require('express'),
 	userModule = require('../controllers/user'),
 	middlewareObj = require('../middleware/middleware');
 const authValidators = require('../validators/auth');
+const userValidators = require('../validators/user');
 const { runValidation } = require('../validators/index.js');
 
 require('dotenv').config();
@@ -35,10 +36,10 @@ router.post('/register', upload.single('image'),authValidators.signupValidator,r
 router.patch(
 	'/edit/:username',
 	upload.single('image'),
-	authValidators.userEditValidator,
-	runValidation,
 	middlewareObj.extractAuthToken,
 	middlewareObj.checkUserOwnership,
+	userValidators.userEditValidator,
+	runValidation,
 	userModule.updateUserInfo
 );
 
