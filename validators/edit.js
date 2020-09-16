@@ -6,8 +6,7 @@ let socialUsernameExp = /^[a-zA-Z0-9_.-]*$/;
 let usernameExp = /^[a-zA-Z0-9_]*$/;
 
 const userEditValidator = [
-	check('facebook').optional({ checkFalsy: true }).matches(urlExp).withMessage('Not valid facebook url'),
-
+ 
 	check('github').optional({ checkFalsy: true }).matches(socialUsernameExp).withMessage('Not valid github username'),
 
 	check('twitter')
@@ -49,7 +48,10 @@ const userEditValidator = [
 	check('newpassword')
 		.optional({ nullable: true })
 		.isLength({ min: 6 })
-		.withMessage('Password must be atleast 6 characters long'),
+		.withMessage('Password must be atleast 6 characters long')
+		.custom((value, {req}) => (req.body.oldpassword))
+	    .withMessage('Please Enter Current password'),
+		
 ];
 
 module.exports = { userEditValidator };

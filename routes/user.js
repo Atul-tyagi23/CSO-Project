@@ -5,7 +5,7 @@ const express = require('express'),
 	userModule = require('../controllers/user'),
 	middlewareObj = require('../middleware/middleware');
 const authValidators = require('../validators/auth');
-const userValidators = require('../validators/user');
+const userValidators = require('../validators/edit');
 const { runValidation } = require('../validators/index.js');
 
 require('dotenv').config();
