@@ -34,9 +34,11 @@ router.post('/register', upload.single('image'),authValidators.signupValidator,r
 
 router.patch(
 	'/edit/:username',
+	upload.single('image'),
+	authValidators.userEditValidator,
+	runValidation,
 	middlewareObj.extractAuthToken,
 	middlewareObj.checkUserOwnership,
-	upload.single('image'),
 	userModule.updateUserInfo
 );
 

@@ -254,6 +254,8 @@ exports.updateUserInfo = async (req, res) => {
 	if (!req.body.twitter) update.twitter = existingUser['twitter'];
 	if (!req.body.github) update.github = existingUser['github'];
 	if (!req.body.instagram) update.instagram = existingUser['instagram'];
+	if (!req.body.contactNumber) update.contactNumber = existingUser['contactNumber'];
+
 
 	let updatedUser;
 
