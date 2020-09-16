@@ -186,7 +186,7 @@ exports.doLogout = (req, res) => {
 // Updating user info
 exports.updateUserInfo = async (req, res) => {
 	let image_url;
-	//console.log(req.body);
+	console.log(req.body);
 
 	let existingUser;
 
@@ -230,9 +230,10 @@ exports.updateUserInfo = async (req, res) => {
 		username: req.body.username,
 		avatar: image_url,
 		about: req.body.about,
+		website: req.body.website,
 		contactNumber: req.body.contactNumber,
 		github: req.body.github,
- 		instagram: req.body.instagram,
+		instagram: req.body.instagram,
 		twitter: req.body.twitter,
 		linkedin: req.body.linkedin,
 	};
@@ -254,8 +255,8 @@ exports.updateUserInfo = async (req, res) => {
 	if (!req.body.twitter) update.twitter = existingUser['twitter'];
 	if (!req.body.github) update.github = existingUser['github'];
 	if (!req.body.instagram) update.instagram = existingUser['instagram'];
+	if (!req.body.website) update.website = existingUser['website'];
 	if (!req.body.contactNumber) update.contactNumber = existingUser['contactNumber'];
-
 
 	let updatedUser;
 
