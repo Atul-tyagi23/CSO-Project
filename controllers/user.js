@@ -186,7 +186,7 @@ exports.doLogout = (req, res) => {
 // Updating user info
 exports.updateUserInfo = async (req, res) => {
 	let image_url;
-	console.log(req.body);
+	// console.log(req.body);
 
 	let existingUser;
 
