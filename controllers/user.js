@@ -234,6 +234,7 @@ exports.updateUserInfo = async (req, res) => {
 		github: req.body.github,
  		instagram: req.body.instagram,
 		twitter: req.body.twitter,
+		linkedin: req.body.linkedin,
 	};
 	let hashedPassword;
 	if (req.body.newpassword) {
@@ -249,7 +250,8 @@ exports.updateUserInfo = async (req, res) => {
 	if (!req.body.username) update.username = existingUser['username'];
 	if (!req.body.name) update.name = existingUser['name'];
 	if (!req.body.about) update.about = existingUser['about'];
- 	if (!req.body.twitter) update.twitter = existingUser['twitter'];
+	if (!req.body.linkedin) update.facebook = existingUser['linkedin'];
+	if (!req.body.twitter) update.twitter = existingUser['twitter'];
 	if (!req.body.github) update.github = existingUser['github'];
 	if (!req.body.instagram) update.instagram = existingUser['instagram'];
 	if (!req.body.contactNumber) update.contactNumber = existingUser['contactNumber'];

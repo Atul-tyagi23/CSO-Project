@@ -6,7 +6,8 @@ let socialUsernameExp = /^[a-zA-Z0-9_.-]*$/;
 let usernameExp = /^[a-zA-Z0-9_]*$/;
 
 const userEditValidator = [
- 
+	check('linkedin').optional({ checkFalsy: true }),
+
 	check('github').optional({ checkFalsy: true }).matches(socialUsernameExp).withMessage('Not valid github username'),
 
 	check('twitter')

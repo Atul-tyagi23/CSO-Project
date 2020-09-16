@@ -45,7 +45,7 @@ var UserSchema = new mongoose.Schema(
 			type: String, 
 		},
 
-		facebook: {
+		linkedin: {
 			type: String,
 		},
 
@@ -59,7 +59,7 @@ var UserSchema = new mongoose.Schema(
 		},
 
 		website: {
-			type: String,
+			type: String ,
 		},
 
 
