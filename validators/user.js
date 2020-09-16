@@ -36,7 +36,8 @@ const userEditValidator = [
         
 	check('contactNumber')
 		.optional({ checkFalsy: true })
-		.matches(phoneExp)
+        .matches(phoneExp)
+        .withMessage('Invalid Contact Number')
 		.isLength({ max: 15 })
 		.withMessage('Invalid Contact Number'),
 
