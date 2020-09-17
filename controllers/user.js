@@ -1,10 +1,7 @@
-const express = require('express'),
-	mongoose = require('mongoose'),
-	User = require('../models/user'),
-	userModule = require('../controllers/user');
+const User = require('../models/user'),
 const cloudinary = require('cloudinary');
-const { createToken, decodeToken } = require('../helpers/auth');
-const slugify = require('slugify');
+const { createToken } = require('../helpers/auth');
+
 const bcrypt = require('bcryptjs');
 
 // Get all users
@@ -110,8 +107,6 @@ exports.newUser = async (req, res) => {
 	});
 
 	return res.status(200).json({ message: 'Successfully Signed up!', token });
-
- 
 };
 
 // Handling login
@@ -146,7 +141,6 @@ exports.doLogin = async (req, res, next) => {
 	});
 
 	return res.status(200).json({ message: 'Logged you in!', token });
- 
 };
 
 // Handling logout
@@ -207,7 +201,7 @@ exports.updateUserInfo = async (req, res) => {
 		website: req.body.website,
 		contactNumber: req.body.contactNumber,
 		github: req.body.github,
- 		instagram: req.body.instagram,
+		instagram: req.body.instagram,
 		twitter: req.body.twitter,
 		linkedin: req.body.linkedin,
 	};
@@ -232,7 +226,7 @@ exports.updateUserInfo = async (req, res) => {
 	if (!req.body.contactNumber) update.contactNumber = existingUser['contactNumber'];
 	if (!req.body.website) update.website = existingUser['website'];
 
-	if(update.username!=req.params.username){
+	if (update.username != req.params.username) {
 		let sameUser;
 
 		try {
@@ -244,8 +238,6 @@ exports.updateUserInfo = async (req, res) => {
 			return res.status(400).json({ error: 'User with given username Already exists' });
 		}
 	}
-
-
 
 	let updatedUser;
 
