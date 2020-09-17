@@ -51,7 +51,7 @@ var upload = multer({ storage: storage, fileFilter: imageFilter });
 app.get('/uploads', (req, res) => {
 	return res.status(200).json({ yes: 'working' });
 });
-app.post('/uploads', upload.single('image'), uploadsController);
+app.post('/uploads', upload.single('file'), uploadsController);
 
 const PORT = process.env.PORT || 8000;
 
