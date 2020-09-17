@@ -111,21 +111,7 @@ exports.newUser = async (req, res) => {
 
 	return res.status(200).json({ message: 'Successfully Signed up!', token });
 
-	// User.register(newUser, req.body.password, (err, newUser) => {
-	// 	if (err) {
-	// 		return res.status(500).json({ error: 'Cannot create user' });
-	// 	} else {
-	// 		passport.authenticate('local')(req, res, () => {
-	// 			let token = createToken({
-	// 				id: newUser.id,
-	// 				username: newUser.username,
-	// 				email: newUser.email,
-	// 				avatar: newUser.avatar,
-	// 			});
-	// 			return res.status(200).json({ message: 'Welcome to website: ' + req.body.username, token });
-	// 		});
-	// 	}
-	// });
+ 
 };
 
 // Handling login
@@ -160,19 +146,7 @@ exports.doLogin = async (req, res, next) => {
 	});
 
 	return res.status(200).json({ message: 'Logged you in!', token });
-
-	// passport.authenticate('local', function (err, user, info) {
-	// 	if (err) {
-	// 		return res.status(500).json({ error: err.message });
-	// 	}
-	// 	if (!user) {
-	// 		return res.status(401).jsoPOSTe,
-	// 			email: user.email,
-	// 			avatar: user.avatar,
-	// 		});
-	// 		return res.status(200).json({ token, message: 'Successfully logged In!!', avatar: user.avatar });
-	// 	});
-	// })(req, res, next);
+ 
 };
 
 // Handling logout
