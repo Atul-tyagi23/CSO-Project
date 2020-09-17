@@ -230,6 +230,7 @@ exports.updateUserInfo = async (req, res) => {
 		username: req.body.username,
 		avatar: image_url,
 		about: req.body.about,
+		website: req.body.website,
 		contactNumber: req.body.contactNumber,
 		github: req.body.github,
  		instagram: req.body.instagram,
@@ -255,6 +256,21 @@ exports.updateUserInfo = async (req, res) => {
 	if (!req.body.github) update.github = existingUser['github'];
 	if (!req.body.instagram) update.instagram = existingUser['instagram'];
 	if (!req.body.contactNumber) update.contactNumber = existingUser['contactNumber'];
+	if (!req.body.website) update.website = existingUser['website'];
+
+	if(update.username!=req.params.username){
+		let sameUser;
+
+		try {
+			sameUser = await User.findOne({ username: req.body.username }).exec();
+		} catch (error) {
+			return res.status(500).json({ error: 'Server error' });
+		}
+		if (sameUser) {
+			return res.status(400).json({ error: 'User with given username Already exists' });
+		}
+	}
+
 
 
 	let updatedUser;
