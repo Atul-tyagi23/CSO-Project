@@ -1,6 +1,8 @@
 const slugify = require("slugify");
 const cloudinary = require("cloudinary");
+const mongoose = require("mongoose");
 
+const User = require("../models/user");
 const Article = require("../models/article");
 
 cloudinary.config({
@@ -11,6 +13,16 @@ cloudinary.config({
 
 exports.createArticle = async (req, res) => {
   const { title, categories, body, mdesc } = req.body;
+
+  let user;
+  try {
+    user = await User.findById(req.userData.id);
+  } catch (error) {
+    return res.status(404).json({
+      message:
+        "Unable to create article as the user doesn't exist. Please register yourself first",
+    });
+  }
 
   let isArticleThere;
   let generatedSlug = slugify(title);
@@ -26,12 +38,10 @@ exports.createArticle = async (req, res) => {
   }
 
   if (isArticleThere) {
-    return res
-      .status(400)
-      .json({
-        message:
-          "An article with same title already exists. Please change the name",
-      });
+    return res.status(400).json({
+      message:
+        "An article with same title already exists. Please change the name",
+    });
   }
 
   let image_url;
@@ -56,18 +66,21 @@ exports.createArticle = async (req, res) => {
   });
 
   try {
-    await createdArticle.save();
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await createdArticle.save({ session: sess });
+    user.articles.push(createdArticle);
+    await user.save({ session: sess });
+    await sess.commitTransaction();
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Error in creating article" });
   }
 
-  return res
-    .status(201)
-    .json({
-      message: `Article named "${title}" published successfully.`,
-      createdArticle,
-    });
+  return res.status(201).json({
+    message: `Article named "${title}" published successfully.`,
+    createdArticle,
+  });
 };
 
 exports.allArticles = async (req, res) => {

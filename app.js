@@ -60,7 +60,7 @@ mongoose.set('useCreateIndex', true);
 // Connecting our app to our Data-Base and setting up DB
 
 mongoose
-	.connect(process.env.DATABASEURL, {
+	.connect(process.env.DATABASECLOUD, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 	})
