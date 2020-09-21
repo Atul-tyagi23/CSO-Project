@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 
 const User = require("../models/user");
 const Article = require("../models/article");
+const defaultImagesArray = require("../helpers/defaultImages");
 
 cloudinary.config({
   cloud_name: "dr6pkartq",
@@ -53,6 +54,10 @@ exports.createArticle = async (req, res) => {
       return res.status(500).json({ message: "Server error" });
     }
     image_url = result.secure_url;
+  }
+
+  if (!image_url) {
+    image_url = defaultImagesArray[category[0]];
   }
 
   let createdArticle = new Article({
