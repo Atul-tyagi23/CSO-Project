@@ -60,9 +60,9 @@ exports.createArticle = async (req, res) => {
     image_url = defaultImagesArray[category[0]];
   }
 
-  console.log("body is");
-  console.log(body);
-  console.log("body is");
+  //console.log("body is");
+  //console.log(body);
+  //console.log("body is");
   let z;
 
   try {
