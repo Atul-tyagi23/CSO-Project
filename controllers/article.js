@@ -106,6 +106,7 @@ exports.allArticles = async (req, res) => {
     articles = await Article.find({})
       .populate("category")
       .populate("postedBy", "name email username avatar")
+      .sort({ createdAt: -1 })
       .lean()
       .exec();
   } catch (error) {
