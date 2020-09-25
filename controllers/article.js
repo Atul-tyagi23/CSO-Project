@@ -103,7 +103,12 @@ exports.createArticle = async (req, res) => {
 exports.allArticles = async (req, res) => {
   let articles;
   try {
-    articles = await Article.find({}).lean().exec();
+    articles = await Article.find({})
+      .populate("category")
+      .populate("postedBy", "name email username avatar")
+      .sort({ createdAt: -1 })
+      .lean()
+      .exec();
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Error in fetching articles" });
