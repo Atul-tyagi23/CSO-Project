@@ -121,7 +121,10 @@ exports.articlesOfOneCategory = async (req, res)=>{
   let givenCategory = req.params.category;
   let articles; 
   try {
-    articles = await Article.find({category:{$in : [givenCategory]}}).select('-body').exec();
+    articles = await Article.find({category:{$in : [givenCategory]}}).select('-body')
+    .populate("category")
+    .populate("postedBy", "name email username avatar")
+    .exec();
   }
   catch(error) {
     return res.status(500).json({ message: error.message});
@@ -139,7 +142,10 @@ exports.articleBySlug = async(req, res)=>{
   let slg = req.params.slug;
   let article;
   try {
-    article = await Article.findOne({slug: slg}).exec();
+    article = await Article.findOne({slug: slg})
+    .populate("category")
+    .populate("postedBy", "name email username avatar")
+    .exec();
   }
   catch(error) {
     return res.status(500).json({ message: error.message});
