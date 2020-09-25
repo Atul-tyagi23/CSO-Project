@@ -1,5 +1,5 @@
 const express = require("express");
-const { createArticle, allArticles } = require("../controllers/article");
+const { createArticle, allArticles, articlesOfOneCategory, articleBySlug } = require("../controllers/article");
 const multer = require("multer");
 const middlewareObj = require("../middleware/middleware");
 
@@ -25,5 +25,9 @@ router.post(
   middlewareObj.extractAuthToken,
   createArticle
 );
+router.get('/:slug', articleBySlug);
+
+router.get('/category/:category', articlesOfOneCategory);
+
 
 module.exports = router;

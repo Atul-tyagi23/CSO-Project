@@ -111,3 +111,40 @@ exports.allArticles = async (req, res) => {
 
   return res.status(200).json({ articles });
 };
+
+exports.articlesOfOneCategory = async (req, res)=>{
+  let givenCategory = req.params.category;
+  let articles; 
+  try {
+    articles = await Article.find({category:{$in : [givenCategory]}}).select('-body').exec();
+  }
+  catch(error) {
+    return res.status(500).json({ message: error.message});
+
+  }
+  if(articles.length==0){
+    return res.status(404).json({ message: 'No Articles for this Category yet' });
+
+  }
+  return res.status(200).json({ articles });
+
+}
+
+exports.articleBySlug = async(req, res)=>{
+  let slg = req.params.slug;
+  let article;
+  try {
+    article = await Article.findOne({slug: slg}).exec();
+  }
+  catch(error) {
+    return res.status(500).json({ message: error.message});
+  }
+
+  if(!article){
+    return res.status(404).json({ message: 'Article not found ' });
+
+  }
+  return res.status(200).json({ article });
+
+
+}
