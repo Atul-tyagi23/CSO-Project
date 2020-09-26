@@ -3,6 +3,7 @@ const cloudinary = require("cloudinary");
 const mongoose = require("mongoose");
 
 const User = require("../models/user");
+const Category = require("../models/category");
 const Article = require("../models/article");
 const defaultImagesArray = require("../helpers/defaultImages");
 
@@ -118,10 +119,24 @@ exports.allArticles = async (req, res) => {
 };
 
 exports.articlesOfOneCategory = async (req, res) => {
-  let givenCategory = req.params.category;
+  let paramsCategory = req.params.category;
+
+  let givenCategory;
+  try {
+    givenCategory = await Category.findOne({ name: paramsCategory });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "Server down. Please try again later" });
+  }
+
+  if (!givenCategory) {
+    return res.status(404).json({ error: "No Such Category exists" });
+  }
+
   let articles;
   try {
-    articles = await Article.find({ category: { $in: [givenCategory] } })
+    articles = await Article.find({ category: { $in: [givenCategory._id] } })
       .select("-body")
       .populate("category")
       .populate("postedBy", "name email username avatar")
