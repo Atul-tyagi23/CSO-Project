@@ -25,9 +25,9 @@ router.post(
   middlewareObj.extractAuthToken,
   createArticle
 );
-router.get('/:slug', articleBySlug);
 
 router.get('/category/:category', articlesOfOneCategory);
 
+router.get('/one/:slug', articleBySlug);
 
 module.exports = router;
