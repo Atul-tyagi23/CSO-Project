@@ -144,11 +144,11 @@ exports.articlesOfOneCategory = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
-  if (articles.length == 0) {
-    return res
-      .status(404)
-      .json({ message: "No Articles for this Category yet" });
-  }
+  // if (articles.length == 0) {
+  //   return res
+  //     .status(404)
+  //     .json({ message: "No Articles for this Category yet" });
+  // }
   return res.status(200).json({ articles });
 };
 
