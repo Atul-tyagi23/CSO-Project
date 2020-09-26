@@ -26,7 +26,7 @@ exports.createArticle = async (req, res) => {
   }
 
   let isArticleThere;
-  let generatedSlug = slugify(title);
+  let generatedSlug = slugify(title.toLowerCase());
 
   let category = categories.split(",");
 
@@ -117,45 +117,40 @@ exports.allArticles = async (req, res) => {
   return res.status(200).json({ articles });
 };
 
-exports.articlesOfOneCategory = async (req, res)=>{
+exports.articlesOfOneCategory = async (req, res) => {
   let givenCategory = req.params.category;
-  let articles; 
+  let articles;
   try {
-    articles = await Article.find({category:{$in : [givenCategory]}}).select('-body')
-    .populate("category")
-    .populate("postedBy", "name email username avatar")
-    .exec();
+    articles = await Article.find({ category: { $in: [givenCategory] } })
+      .select("-body")
+      .populate("category")
+      .populate("postedBy", "name email username avatar")
+      .exec();
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
-  catch(error) {
-    return res.status(500).json({ message: error.message});
-
-  }
-  if(articles.length==0){
-    return res.status(404).json({ message: 'No Articles for this Category yet' });
-
+  if (articles.length == 0) {
+    return res
+      .status(404)
+      .json({ message: "No Articles for this Category yet" });
   }
   return res.status(200).json({ articles });
+};
 
-}
-
-exports.articleBySlug = async(req, res)=>{
+exports.articleBySlug = async (req, res) => {
   let slg = req.params.slug;
   let article;
   try {
-    article = await Article.findOne({slug: slg})
-    .populate("category")
-    .populate("postedBy", "name email username avatar")
-    .exec();
-  }
-  catch(error) {
-    return res.status(500).json({ message: error.message});
+    article = await Article.findOne({ slug: slg })
+      .populate("category")
+      .populate("postedBy", "name email username avatar")
+      .exec();
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
 
-  if(!article){
-    return res.status(404).json({ message: 'Article not found ' });
-
+  if (!article) {
+    return res.status(404).json({ message: "Article not found " });
   }
   return res.status(200).json({ article });
-
-
-}
+};
