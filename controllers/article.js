@@ -119,7 +119,8 @@ exports.allArticles = async (req, res) => {
 };
 
 exports.articlesOfOneCategory = async (req, res) => {
-  let paramsCategory = req.params.category;
+  let paramsCategory =
+    req.params.category[0].toUpperCase() + req.params.category.slice(1);
 
   let givenCategory;
   try {
