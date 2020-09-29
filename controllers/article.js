@@ -140,7 +140,7 @@ exports.articlesOfOneCategory = async (req, res) => {
     articles = await Article.find({ category: { $in: [givenCategory._id] } })
       .select("-body")
       .populate("category")
-      .populate("postedBy", "name email username avatar")
+      .populate("postedBy", "-password")
       .exec();
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -150,6 +150,7 @@ exports.articlesOfOneCategory = async (req, res) => {
   //     .status(404)
   //     .json({ message: "No Articles for this Category yet" });
   // }
+  console.log(articles);
   return res.status(200).json({ articles });
 };
 
@@ -159,7 +160,7 @@ exports.articleBySlug = async (req, res) => {
   try {
     article = await Article.findOne({ slug: slg })
       .populate("category")
-      .populate("postedBy", "name email username avatar")
+      .populate("postedBy", "-password" )
       .exec();
   } catch (error) {
     return res.status(500).json({ message: error.message });
