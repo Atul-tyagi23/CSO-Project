@@ -165,9 +165,23 @@ exports.articleBySlug = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
+  let category;
+  category = article.category;
+  let articles;
+  try {
+    articles = await Article.find({ category: { $in: category }, slug : { $ne : article.slug }})
+      .select("-body")
+      .populate("category")
+      .populate("postedBy", "-password")
+      .exec();
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+
+
 
   if (!article) {
     return res.status(404).json({ message: "Article not found " });
   }
-  return res.status(200).json({ article });
+  return res.status(200).json({ article ,articles });
 };
