@@ -170,9 +170,9 @@ exports.articleBySlug = async (req, res) => {
   let articles;
   try {
     articles = await Article.find({ category: { $in: category }, slug : { $ne : article.slug }})
-      .select("-body")
+      .select("slug title category featuredPhoto")
       .populate("category")
-      .populate("postedBy", "-password")
+      .populate("postedBy", "name username")
       .exec();
   } catch (error) {
     return res.status(500).json({ message: error.message });
