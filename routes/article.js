@@ -1,5 +1,11 @@
 const express = require("express");
-const { createArticle, allArticles, articlesOfOneCategory, articleBySlug } = require("../controllers/article");
+const {
+  createArticle,
+  allArticles,
+  articlesOfOneCategory,
+  articleBySlug,
+  deleteOneAricle,
+} = require("../controllers/article");
 const multer = require("multer");
 const middlewareObj = require("../middleware/middleware");
 
@@ -26,8 +32,10 @@ router.post(
   createArticle
 );
 
-router.get('/category/:category', articlesOfOneCategory);
+router.get("/category/:category", articlesOfOneCategory);
 
-router.get('/one/:slug', articleBySlug);
+router.get("/one/:slug", articleBySlug);
+
+router.delete(`/one/:slug`, middlewareObj.extractAuthToken, deleteOneAricle);
 
 module.exports = router;

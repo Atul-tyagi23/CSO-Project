@@ -160,7 +160,7 @@ exports.articleBySlug = async (req, res) => {
   try {
     article = await Article.findOne({ slug: slg })
       .populate("category")
-      .populate("postedBy", "-password" )
+      .populate("postedBy", "-password")
       .exec();
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -169,7 +169,10 @@ exports.articleBySlug = async (req, res) => {
   category = article.category;
   let articles;
   try {
-    articles = await Article.find({ category: { $in: category }, slug : { $ne : article.slug }})
+    articles = await Article.find({
+      category: { $in: category },
+      slug: { $ne: article.slug },
+    })
       .select("slug title category featuredPhoto")
       .populate("category")
       .populate("postedBy", "name username")
@@ -178,10 +181,49 @@ exports.articleBySlug = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 
-
-
   if (!article) {
     return res.status(404).json({ message: "Article not found " });
   }
-  return res.status(200).json({ article ,articles });
+  return res.status(200).json({ article, articles });
+};
+
+exports.deleteOneAricle = async (req, res) => {
+  let slug = req.params.slug;
+  let article;
+  try {
+    article = await Article.findOne({ slug }).populate("postedBy");
+  } catch (error) {
+    return res.status(500).json({ error: error.message || "Server Error" });
+  }
+
+  if (!article) {
+    return res.status(404).json({ error: "No article found " });
+  }
+
+  if (article.postedBy.id !== req.userData.id) {
+    return res
+      .status(403)
+      .json({ error: "You are not allowed to perform this operation" });
+  }
+
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await article.remove({ session: sess });
+    article.postedBy.articles.pull(article);
+    await article.postedBy.save({ session: sess });
+    await sess.commitTransaction();
+  } catch (error) {
+    return res
+      .status(500)
+      .json({
+        error:
+          error.message ||
+          "Unable to delete the article. Please try again later",
+      });
+  }
+
+  return res
+    .status(200)
+    .json({ article, message: "Deleted article succefully" });
 };
