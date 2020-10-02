@@ -290,9 +290,13 @@ exports.getDetails = async (req, res) => {
   try {
     foundUser = await User.findOne({ username: req.params.username })
       .select("-password")
-      .populate("articles", "title slug mdesc")
+      .populate({
+        path: "articles",
+        select: "slug title mdesc updatedAt",
+      })
       .lean()
       .exec();
+    foundUser.articles.sort((a, b) => b.updatedAt - a.updatedAt);
   } catch (error) {
     return res
       .status(503)
