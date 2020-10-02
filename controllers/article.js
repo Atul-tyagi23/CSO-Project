@@ -150,7 +150,7 @@ exports.articlesOfOneCategory = async (req, res) => {
   //     .status(404)
   //     .json({ message: "No Articles for this Category yet" });
   // }
-  console.log(articles);
+  // console.log(articles);
   return res.status(200).json({ articles });
 };
 
@@ -227,5 +227,5 @@ exports.deleteOneAricle = async (req, res) => {
 
   return res
     .status(200)
-    .json({ article, message: "Deleted article succefully" });
+    .json({ message: "Deleted article succesfully" });
 };
