@@ -181,6 +181,7 @@ exports.articleBySlug = async (req, res) => {
       .select("slug title category featuredPhoto")
       .populate("category")
       .populate("postedBy", "name username")
+      .limit(4)
       .exec();
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -216,16 +217,11 @@ exports.deleteOneAricle = async (req, res) => {
     await article.postedBy.save({ session: sess });
     await sess.commitTransaction();
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        error:
-          error.message ||
-          "Unable to delete the article. Please try again later",
-      });
+    return res.status(500).json({
+      error:
+        error.message || "Unable to delete the article. Please try again later",
+    });
   }
 
-  return res
-    .status(200)
-    .json({ message: "Deleted article succesfully" });
+  return res.status(200).json({ message: "Deleted article succesfully" });
 };
