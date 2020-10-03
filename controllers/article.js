@@ -195,11 +195,77 @@ exports.articleBySlug = async (req, res) => {
   return res.status(200).json({ article, articles });
 };
 
+exports.editOneArticle = async (req, res) => {
+  let user;
+  const { categories, body, mdesc, featuredPhoto } = req.body;
+  
+  
+  try {
+    user = await User.findById(req.userData.id);
+  } catch (error) {
+    return res.status(404).json({
+      message:
+        "Unable to edit article as the user doesn't exist. Please register yourself first",
+    });
+  }
+
+  let image_url;
+  if (req.file) {
+    let result;
+    try {
+      result = await cloudinary.v2.uploader.upload(req.file.path);
+    } catch (error) {
+      return res.status(500).json({ message: "Server error" });
+    }
+    image_url = result.secure_url;
+  }
+
+  if (!image_url) {
+    image_url = featuredPhoto;
+  }
+  let category = categories.split(",");
+
+  let update = {
+    body,
+    image_url,
+    mdesc,
+    category,
+    featuredPhoto: image_url,
+  };
+
+  let updatedArticle;
+  try {
+    updatedArticle = await Article.findOneAndUpdate(
+      {
+        slug: req.params.slug,
+        postedBy: req.userData.id,
+      },
+      update,
+      { new: true }
+    )
+      .lean()
+      .exec();
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "Could not update article. Please try again later" });
+  }
+
+  if (!updatedArticle) {
+    return res.status(404).json({
+      error:
+        "The article either doesn't exist or you are updating someone else's article.",
+    });
+  }
+
+  return res.status(200).json({ message: "Succesfully updated the article" });
+};
+
 exports.deleteOneAricle = async (req, res) => {
   let slug = req.params.slug;
   let article;
   try {
-    article = await Article.findOne({ slug }).populate("postedBy");
+    article = await Article.findOne({ slug }).populate("postedBy").exec();
   } catch (error) {
     return res.status(500).json({ error: error.message || "Server Error" });
   }

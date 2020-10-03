@@ -5,6 +5,7 @@ const {
   articlesOfOneCategory,
   articleBySlug,
   deleteOneAricle,
+  editOneArticle,
 } = require("../controllers/article");
 const multer = require("multer");
 const middlewareObj = require("../middleware/middleware");
@@ -35,6 +36,13 @@ router.post(
 router.get("/category/:category", articlesOfOneCategory);
 
 router.get("/one/:slug", articleBySlug);
+
+router.patch(
+  "/one/:slug",
+  upload.single("image"),
+  middlewareObj.extractAuthToken,
+  editOneArticle
+);
 
 router.delete(`/one/:slug`, middlewareObj.extractAuthToken, deleteOneAricle);
 
