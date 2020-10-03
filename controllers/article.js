@@ -160,7 +160,7 @@ exports.articleBySlug = async (req, res) => {
   try {
     article = await Article.findOne({ slug: slg })
       .populate("category")
-      .populate("postedBy", "-password")
+      .populate("postedBy", "-password -articles -isAdmin")
       .exec();
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -168,6 +168,11 @@ exports.articleBySlug = async (req, res) => {
 
   if (!article) {
     return res.status(404).json({ message: "Article not found " });
+  }
+
+  // adding this to fetch the article only not similar ones
+  if (req.headers.fetchtype === "Single") {
+    return res.status(200).json({ article });
   }
 
   let category;
