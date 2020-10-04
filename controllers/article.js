@@ -20,6 +20,14 @@ exports.createArticle = async (req, res) => {
   try {
     user = await User.findById(req.userData.id);
   } catch (error) {
+    return res
+      .status(500)
+      .json({
+        error: error.message || "Server error occurred. Try again later",
+      });
+  }
+
+  if (!user) {
     return res.status(404).json({
       message:
         "Unable to create article as the user doesn't exist. Please register yourself first",
@@ -198,14 +206,21 @@ exports.articleBySlug = async (req, res) => {
 exports.editOneArticle = async (req, res) => {
   let user;
   const { categories, body, mdesc, featuredPhoto } = req.body;
-  
-  
+
   try {
     user = await User.findById(req.userData.id);
   } catch (error) {
+    return res
+      .status(500)
+      .json({
+        error: error.message || "Server error occurred. Try again later",
+      });
+  }
+
+  if (!user) {
     return res.status(404).json({
       message:
-        "Unable to edit article as the user doesn't exist. Please register yourself first",
+        "Unable to create article as the user doesn't exist. Please register yourself first",
     });
   }
 
