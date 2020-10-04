@@ -7,7 +7,7 @@ const Article = require("../models/article");
 const Request = require("../models/requests");
 
 exports.createRequest = async (req, res) => {
-  const { title, impPoints, mdesc } = req.body;
+  const { title, impPoints, desc } = req.body;
 
   let generatedSlug = slugify(title.toLowerCase());
 
@@ -29,7 +29,7 @@ exports.createRequest = async (req, res) => {
     title,
     generatedSlug,
     impPoints,
-    mdesc,
+    desc,
     postedBy: req.userData.id,
   });
   let savedRequest;
@@ -38,7 +38,7 @@ exports.createRequest = async (req, res) => {
   } catch (error) {
     return res
       .status(500)
-      .json({ error: "Cannot make request write now please try later" });
+      .json({ error: error });
   }
 
   return res
