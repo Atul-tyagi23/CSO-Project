@@ -6,13 +6,17 @@ var requestSchema = new mongoose.Schema({
         index: true,
         required: true,
     },
-    impPoint: {
+    impPoints: {
         type: String,
         index: true,
         required: true,
     },
+    mdesc: {
+        type: String,
+        required: true,
+    },
     article: {
-        type: mongoose.Schema.type.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Article'
     },
     postedBy: {

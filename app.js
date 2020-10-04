@@ -23,6 +23,7 @@ app.disable('x-powered-by');
 const categoryRoutes = require('./routes/categories');
 const userRoutes = require('./routes/user');
 const articleRoutes = require('./routes/article');
+const requestedArticleRoutes = require('./routes/requestedArticle');
 
 // using routes
 app.use('/api', categoryRoutes);
@@ -30,6 +31,9 @@ app.use('/api', categoryRoutes);
 app.use('/api/user', userRoutes);
 
 app.use('/api/article', articleRoutes);
+
+app.use('/api/request', requestedArticleRoutes);
+
 
 // for multer upload of images
 var multer = require('multer');
