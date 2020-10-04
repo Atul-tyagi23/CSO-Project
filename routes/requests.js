@@ -4,17 +4,17 @@ const middlewareObj = require("../middleware/middleware");
 
 
 const {
-    createRequestedArticle,
-    allRequestedArticles ,
-  } = require("../controllers/requestedArticle");
+    createRequest,
+    allRequests,
+  } = require("../controllers/requests");
 
 // Create requested Article
-router.post('/create', middlewareObj.extractAuthToken, createRequestedArticle);
+router.post('/create', middlewareObj.extractAuthToken, createRequest);
 
 
 
 // get all 'Requested Articles'
-router.get('/', allRequestedArticles)
+router.get('/', allRequests)
 
 
 module.exports = router;
