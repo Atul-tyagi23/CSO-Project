@@ -40,3 +40,19 @@ exports.createRequestedArticle = async (req, res) => {
     return res.status(200).json({ message: "Request sent successfully", savedRequest });
 
 }    
+
+exports.allRequestedArticles = async (req, res) => {
+    let requestedArticles;
+    try {
+      requestedArticles = await RequestedArticle.find({})
+        .populate("postedBy", "name email username avatar")
+        .sort({ createdAt: -1 })
+        .lean()
+        .exec();
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: "Error in fetching requests" });
+    }
+  
+    return res.status(200).json({ requestedArticles});
+  };
