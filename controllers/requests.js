@@ -25,9 +25,25 @@ exports.createRequest = async (req, res) => {
     });
   }
 
+  let isRequestThere;
+  try {
+    isRequestThere = await Request.findOne({ slug: generatedSlug })
+      .lean()
+      .exec();
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+
+  if (isRequestThere) {
+    return res.status(400).json({
+      message:
+        "Request with same title already exists. Please change the title",
+    });
+  }
+
   let newRequest = new Request({
     title,
-    generatedSlug,
+    slug: generatedSlug,
     impPoints,
     desc,
     postedBy: req.userData.id,
@@ -36,9 +52,7 @@ exports.createRequest = async (req, res) => {
   try {
     savedRequest = await newRequest.save();
   } catch (error) {
-    return res
-      .status(500)
-      .json({ error: error });
+    return res.status(500).json({ error: error });
   }
 
   return res

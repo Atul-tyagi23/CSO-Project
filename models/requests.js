@@ -7,6 +7,11 @@ var requestSchema = new mongoose.Schema(
       index: true,
       required: true,
     },
+    slug: {
+      type: String,
+      unique: true,
+      required: true,
+    },
     impPoints: {
       type: String,
       index: true,
