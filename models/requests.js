@@ -28,6 +28,10 @@ var requestSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    suggestedArticle: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Article",
+    },
     status: {
       type: String,
       enum: ["OPEN", "PENDING", "CLOSED"],
