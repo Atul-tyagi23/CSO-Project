@@ -12,11 +12,6 @@ var requestSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
-    impPoints: {
-      type: String,
-      index: true,
-      required: true,
-    },
     desc: {
       type: String,
       required: true,
