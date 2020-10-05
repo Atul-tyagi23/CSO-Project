@@ -75,3 +75,97 @@ exports.allRequests = async (req, res) => {
 
   return res.status(200).json({ requests });
 };
+
+
+
+exports.editRequest = async (req, res) => {
+  let user;
+  const { title, desc } = req.body;
+
+  try {
+    user = await User.findById(req.userData.id);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({
+        error: error.message || "Server error occurred. Try again later",
+      });
+  }
+
+  if (!user) {
+    return res.status(404).json({
+      message:
+        "Unable to create article as the user doesn't exist. Please register yourself first",
+    });
+  }
+
+let currentRequest ;
+  try {
+    currentRequest = await Request.findOne({slug : req.params.slug })
+  }
+  catch(error){
+    return res
+    .status(500)
+    .json({ error: "Server error please try later" });
+  }
+
+  if(!currentRequest){
+    return res.status(404).json({
+      error:
+        "Request not found ",
+    });
+  }
+  
+  //console.log((new Date().getTime() - currentRequest.createdAt.getTime())<1);
+
+  if(currentRequest.status != 'OPEN' || (new Date().getTime() - currentRequest.createdAt.getTime())>1.728e+8){
+     return res
+    .status(500)
+    .json({
+      message:  "Cannot update request after 2 days of its creation",
+    });
+  } 
+ 
+  let update = {
+      title,
+      desc,
+   };
+  if(!update.title)
+  { update.title = currentRequest.title
+    update.slug = currentRequest.slug 
+  } else {
+    update.slug =  slugify(title.toLowerCase());
+  }
+  if(!desc)
+    update.desc = currentRequest.desc
+
+  
+  
+  let updatedRequest;
+  try {
+    updatedRequest = await Request.findOneAndUpdate(
+      {
+          slug: req.params.slug,
+          postedBy: req.userData.id,
+      },
+        update,
+        { new: true }
+      )
+        .lean()
+        .exec();
+  } catch (error) {
+      return res
+        .status(500)
+        .json({ error: "Could not update article. Please try again later" });
+  }    
+  
+  if (!updatedRequest) {
+    return res.status(404).json({
+      error:
+        "The request either doesn't exist or you are updating someone else's request.",
+    });
+  }
+
+  return res.status(200).json({ message: "Succesfully updated the request" });
+    
+}
