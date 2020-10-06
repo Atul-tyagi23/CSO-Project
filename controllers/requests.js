@@ -55,9 +55,10 @@ exports.createRequest = async (req, res) => {
     return res.status(500).json({ error: error });
   }
 
-  return res
-    .status(200)
-    .json({ message: "Request sent successfully", savedRequest });
+  return res.status(200).json({
+    message: `Request named "${savedRequest.title}" created successfully`,
+    savedRequest,
+  });
 };
 
 exports.allRequests = async (req, res) => {
@@ -76,8 +77,6 @@ exports.allRequests = async (req, res) => {
   return res.status(200).json({ requests });
 };
 
-
-
 exports.editRequest = async (req, res) => {
   let user;
   const { title, desc } = req.body;
@@ -85,11 +84,9 @@ exports.editRequest = async (req, res) => {
   try {
     user = await User.findById(req.userData.id);
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        error: error.message || "Server error occurred. Try again later",
-      });
+    return res.status(500).json({
+      error: error.message || "Server error occurred. Try again later",
+    });
   }
 
   if (!user) {
@@ -99,66 +96,60 @@ exports.editRequest = async (req, res) => {
     });
   }
 
-let currentRequest ;
+  let currentRequest;
   try {
-    currentRequest = await Request.findOne({slug : req.params.slug })
-  }
-  catch(error){
-    return res
-    .status(500)
-    .json({ error: "Server error please try later" });
+    currentRequest = await Request.findOne({ slug: req.params.slug });
+  } catch (error) {
+    return res.status(500).json({ error: "Server error please try later" });
   }
 
-  if(!currentRequest){
+  if (!currentRequest) {
     return res.status(404).json({
-      error:
-        "Request not found ",
+      error: "Request not found ",
     });
   }
-  
+
   //console.log((new Date().getTime() - currentRequest.createdAt.getTime())<1);
 
-  if(currentRequest.status != 'OPEN' || (new Date().getTime() - currentRequest.createdAt.getTime())>1.728e+8){
-     return res
-    .status(500)
-    .json({
-      message:  "Cannot update request after 2 days of its creation",
+  if (
+    currentRequest.status != "OPEN" ||
+    new Date().getTime() - currentRequest.createdAt.getTime() > 1.728e8
+  ) {
+    return res.status(500).json({
+      message: "Cannot update request after 2 days of its creation",
     });
-  } 
- 
-  let update = {
-      title,
-      desc,
-   };
-  if(!update.title)
-  { update.title = currentRequest.title
-    update.slug = currentRequest.slug 
-  } else {
-    update.slug =  slugify(title.toLowerCase());
   }
-  if(!desc)
-    update.desc = currentRequest.desc
 
-  
-  
+  let update = {
+    title,
+    desc,
+  };
+  if (!update.title) {
+    update.title = currentRequest.title;
+    update.slug = currentRequest.slug;
+  } else {
+    update.slug = slugify(title.toLowerCase());
+  }
+  if (!desc) update.desc = currentRequest.desc;
+
   let updatedRequest;
   try {
     updatedRequest = await Request.findOneAndUpdate(
       {
-          slug: req.params.slug,
-          postedBy: req.userData.id,
+        slug: req.params.slug,
+        postedBy: req.userData.id,
       },
-        update,
-        { new: true }
-      )
-        .lean()
-        .exec();
+      update,
+      { new: true }
+    )
+      .lean()
+      .exec();
   } catch (error) {
-      return res
-        .status(500)
-        .json({ error: "Could not update article. Please try again later" });
-  }    
-  
+    return res
+      .status(500)
+      .json({ error: "Could not update article. Please try again later" });
+  }
+
   if (!updatedRequest) {
     return res.status(404).json({
       error:
@@ -167,16 +158,14 @@ let currentRequest ;
   }
 
   return res.status(200).json({ message: "Succesfully updated the request" });
-    
-}
+};
 
 exports.requestBySlug = async (req, res) => {
   let slg = req.params.slug;
   let request;
   try {
     request = await Request.findOne({ slug: slg })
-      .populate("article")
-      .populate('suggestedArticle')
+      .populate("article", "title slug mdesc")
       .populate("postedBy", "name username email avatar")
       .populate("closedBy", "name username email avatar")
       .exec();
@@ -188,4 +177,4 @@ exports.requestBySlug = async (req, res) => {
     return res.status(404).json({ message: "Request not found " });
   }
   return res.status(200).json({ request });
-}  
+};
