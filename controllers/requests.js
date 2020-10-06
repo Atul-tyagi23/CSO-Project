@@ -169,3 +169,23 @@ let currentRequest ;
   return res.status(200).json({ message: "Succesfully updated the request" });
     
 }
+
+exports.requestBySlug = async (req, res) => {
+  let slg = req.params.slug;
+  let request;
+  try {
+    request = await Request.findOne({ slug: slg })
+      .populate("article")
+      .populate('suggestedArticle')
+      .populate("postedBy", "name username email avatar")
+      .populate("closedBy", "name username email avatar")
+      .exec();
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+
+  if (!request) {
+    return res.status(404).json({ message: "Request not found " });
+  }
+  return res.status(200).json({ request });
+}  
