@@ -168,6 +168,7 @@ exports.requestBySlug = async (req, res) => {
       .populate("article", "title slug mdesc")
       .populate("postedBy", "name username email avatar")
       .populate("closedBy", "name username email avatar")
+      .lean()
       .exec();
   } catch (error) {
     return res.status(500).json({ message: error.message });
