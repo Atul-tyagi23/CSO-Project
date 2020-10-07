@@ -113,7 +113,7 @@ exports.editRequest = async (req, res) => {
 
   if (
     currentRequest.status != "OPEN" ||
-    new Date().getTime() - currentRequest.createdAt.getTime() > 1.728e8
+    new Date().getTime() - new Date(currentRequest.createdAt).getTime() > 1.728e8
   ) {
     return res.status(500).json({
       message: "Cannot update request after 2 days of its creation",
