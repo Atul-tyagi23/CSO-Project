@@ -179,3 +179,36 @@ exports.requestBySlug = async (req, res) => {
   }
   return res.status(200).json({ request });
 };
+
+exports.deleteRequest = async (req, res) => {
+  let slug = req.params.slug;
+  let request;
+  try {
+    request = await Request.findOne({ slug }).populate("postedBy").exec();
+  } catch (error) {
+    return res.status(500).json({ error: error.message || "Server Error" });
+  }
+
+  if (!request) {
+    return res.status(404).json({ error: "No request found" });
+  }
+
+  if (request.postedBy.id !== req.userData.id) {
+    return res
+      .status(403)
+      .json({ error: "You are not allowed to perform this operation" });
+  }
+
+  try {
+
+    await request.remove();
+ 
+  } catch (error) {
+    return res.status(500).json({
+      error:
+        error.message || "Unable to delete the request. Please try again later",
+    });
+  }
+
+  return res.status(200).json({ message: "Deleted request succesfully" });
+};
