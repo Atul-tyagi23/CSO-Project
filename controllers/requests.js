@@ -198,6 +198,7 @@ exports.deleteRequest = async (req, res) => {
       .status(403)
       .json({ error: "You are not allowed to perform this operation" });
   }
+
   if(request.status!='OPEN'){
     return res
     .status(403)
@@ -205,15 +206,70 @@ exports.deleteRequest = async (req, res) => {
   }
 
   try {
-
     await request.remove();
- 
   } catch (error) {
     return res.status(500).json({
       error:
         error.message || "Unable to delete the request. Please try again later",
     });
   }
-
   return res.status(200).json({ message: "Deleted request succesfully" });
 };
+
+
+exports.suggestedArticle = async (req, res)=>{
+   console.log(req.params);
+  let user ;
+  try {
+    user = await User.findOne({username : req.body.username}).exec()
+  }
+  catch (error) {
+    return res.status(500).json({
+      error:
+        error.message || "Server error",
+    });
+  }
+  
+  let article;
+  try {
+    article = await Article.findOne({slug : req.body.article}).exec()
+  }
+  catch (error) {
+    return res.status(500).json({
+      error:
+        error.message || "server error",
+    });
+  }
+   let update = {
+    article: article,
+    closedBy: user, 
+  };
+
+  let updatedRequest;
+  try {
+    updatedRequest = await Request.findOneAndUpdate(
+      {
+        slug: req.params.slug,
+       },
+      update,
+      { new: true }
+    )
+      .lean()
+      .exec();
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "Could not Suggest. Please try again later" });
+  }
+
+  if (!updatedRequest) {
+    return res.status(404).json({
+      error:
+        " The request doesn't exist.",
+    });
+  }
+
+  return res.status(200).json({ message: "Succesfully made the suggestion" });
+
+
+}
