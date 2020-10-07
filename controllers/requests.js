@@ -180,6 +180,7 @@ exports.requestBySlug = async (req, res) => {
   return res.status(200).json({ request });
 };
 
+// delete one request
 exports.deleteRequest = async (req, res) => {
   let slug = req.params.slug;
   let request;
@@ -216,7 +217,7 @@ exports.deleteRequest = async (req, res) => {
   return res.status(200).json({ message: "Deleted request succesfully" });
 };
 
-
+// article suggestion
 exports.suggestedArticle = async (req, res)=>{
    console.log(req.params);
   let user ;
@@ -268,8 +269,67 @@ exports.suggestedArticle = async (req, res)=>{
         " The request doesn't exist.",
     });
   }
-
   return res.status(200).json({ message: "Succesfully made the suggestion" });
+}
+
+// Changing status 
+exports.changeRequestStatus = async (req, res) =>{
+  let request;
+  try {
+    request = await Request.findOne({ slug :req.params.slug }).populate("postedBy").exec();
+  } catch (error) {
+    return res.status(500).json({ error: error.message || "Server Error" });
+  }
+
+  if (!request) {
+    return res.status(404).json({ error: "No request found" });
+  }
+
+  if (request.postedBy.id !== req.userData.id) {
+    return res
+      .status(403)
+      .json({ error: "You are not allowed to perform this operation" });
+  }
+   let status;
+   if(req.body.approve="YES"){
+     status = "CLOSED";
+   }
+   else {
+     status ="OPEN";
+   }
+
+  let update = {
+    status: status,
+ 
+  };
+
+  let updatedRequest;
+  try {
+    updatedRequest = await Request.findOneAndUpdate(
+      {
+        slug: req.params.slug,
+       },
+      update,
+      { new: true }
+    )
+      .lean()
+      .exec();
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "Could not update status. Please try again later" });
+  }
+
+  if (!updatedRequest) {
+    return res.status(404).json({
+      error:
+        " The request doesn't exist.",
+    });
+  }
+  return res.status(200).json({ message: "Succesfully updated status for route" });
+
+
+
 
 
 }

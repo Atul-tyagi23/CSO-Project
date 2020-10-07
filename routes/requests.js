@@ -10,6 +10,7 @@ const {
     requestBySlug,
     deleteRequest,
     suggestedArticle,
+    changeRequestStatus,
   } = require("../controllers/requests");
 
 // Create requested Article
@@ -37,5 +38,8 @@ router.delete(`/one/:slug`, middlewareObj.extractAuthToken, deleteRequest);
 
 router.patch('suggest/one/:slug' , suggestedArticle)
 
+// close or open any particular request 
+
+router.patch('/close/one/:slug', middlewareObj.extractAuthToken, changeRequestStatus)
 
 module.exports = router;
