@@ -220,8 +220,8 @@ exports.deleteRequest = async (req, res) => {
 
 // article suggestion
 exports.suggestedArticle = async (req, res) => {
-  console.log(req.params);
-  console.log(req.body);
+  //console.log(req.params);
+ // console.log(req.body);
   let user;
   try {
     user = await User.findOne({ username: req.userData.username }).exec();
@@ -286,6 +286,11 @@ exports.suggestedArticle = async (req, res) => {
 
 // Changing status
 exports.changeRequestStatus = async (req, res) => {
+  if(!req.body.approve){
+    return res.status(404).json({ error: "Approval not found " });
+
+  }
+  
   let request;
   try {
     request = await Request.findOne({ slug: req.params.slug })
