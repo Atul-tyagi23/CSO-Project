@@ -230,6 +230,12 @@ exports.suggestedArticle = async (req, res) => {
     });
   }
 
+  if (!user) {
+    return res.status(404).json({
+      error: "No such user. Please create an account instead",
+    });
+  }
+
   let article;
   let slug = slugify(req.body.article.toLowerCase());
   try {
