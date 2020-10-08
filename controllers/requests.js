@@ -201,7 +201,7 @@ exports.deleteRequest = async (req, res) => {
       .json({ error: "You are not allowed to perform this operation" });
   }
 
-  if (request.status != "OPEN") {
+  if (request.status !== "OPEN") {
     return res
       .status(403)
       .json({ error: "You cannot delete request as status is not open" });
