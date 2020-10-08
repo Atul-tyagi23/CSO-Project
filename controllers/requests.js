@@ -66,6 +66,8 @@ exports.allRequests = async (req, res) => {
   try {
     requests = await Request.find({})
       .populate("postedBy", "name email username avatar")
+      .populate("closedBy", "name username")
+      .populate("article", "title slug")
       .sort({ createdAt: -1 })
       .lean()
       .exec();
@@ -166,9 +168,9 @@ exports.requestBySlug = async (req, res) => {
   let request;
   try {
     request = await Request.findOne({ slug: slg })
-      .populate("article", "title slug mdesc")
-      .populate("postedBy", "name username email avatar")
-      .populate("closedBy", "name username email avatar")
+      .populate("article", "title slug ")
+      .populate("postedBy", "name username ")
+      .populate("closedBy", "name username ")
       .lean()
       .exec();
   } catch (error) {
