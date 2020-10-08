@@ -221,7 +221,7 @@ exports.deleteRequest = async (req, res) => {
 // article suggestion
 exports.suggestedArticle = async (req, res) => {
   //console.log(req.params);
- // console.log(req.body);
+  // console.log(req.body);
   let user;
   try {
     user = await User.findOne({ username: req.userData.username }).exec();
@@ -286,11 +286,10 @@ exports.suggestedArticle = async (req, res) => {
 
 // Changing status
 exports.changeRequestStatus = async (req, res) => {
-  if(!req.body.approve){
+  if (!req.body.approve) {
     return res.status(404).json({ error: "Approval not found " });
-
   }
-  
+
   let request;
   try {
     request = await Request.findOne({ slug: req.params.slug })
@@ -309,16 +308,17 @@ exports.changeRequestStatus = async (req, res) => {
       .status(403)
       .json({ error: "You are not allowed to perform this operation" });
   }
-  let status;
+  let status,
+    update = {};
   if (req.body.approve === "YES") {
     status = "CLOSED";
   } else {
     status = "OPEN";
+    update.article = null;
+    update.closedBy = null;
   }
 
-  let update = {
-    status: status,
-  };
+  update.status = status;
 
   let updatedRequest;
   try {
