@@ -354,8 +354,6 @@ exports.favArticle = async (req, res) =>{
         error.message || "Unable to add to favourite, please try later",
     });
   }
- 
-
   if (foundFav) {
     try{
       await user.favs.pull(article._id)
@@ -368,8 +366,7 @@ exports.favArticle = async (req, res) =>{
     }
   } else {
     try{
-      await user.favs.push(article._id)
-      
+      await user.favs.push(article._id)  
     }
     catch(error){
       return res.status(500).json({
@@ -394,10 +391,5 @@ exports.favArticle = async (req, res) =>{
         "The article either doesn't exist or you are updating someone else's article.",
     });
   }
-
- 
-
   return res.status(200).json({ message: "Succesfully added to favourites" });
-
-
 } 
