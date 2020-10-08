@@ -239,9 +239,17 @@ exports.suggestedArticle = async (req, res) => {
       error: error.message || "server error",
     });
   }
+
+  if (!article) {
+    return res.status(404).json({
+      error: "No article of such title exists. Please Provide a valid title",
+    });
+  }
+
   let update = {
     article: article,
     closedBy: user,
+    status: "PENDING",
   };
 
   let updatedRequest;
