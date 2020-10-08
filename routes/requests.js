@@ -30,7 +30,7 @@ router.delete(`/one/:slug`, middlewareObj.extractAuthToken, deleteRequest);
 // route for suggested article
 
 router.patch(
-  "suggest/one/:slug",
+  "/suggest/one/:slug",
   middlewareObj.extractAuthToken,
   suggestedArticle
 );

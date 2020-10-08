@@ -221,6 +221,7 @@ exports.deleteRequest = async (req, res) => {
 // article suggestion
 exports.suggestedArticle = async (req, res) => {
   console.log(req.params);
+  console.log(req.body);
   let user;
   try {
     user = await User.findOne({ username: req.userData.username }).exec();
