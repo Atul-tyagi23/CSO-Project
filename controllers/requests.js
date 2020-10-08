@@ -113,7 +113,8 @@ exports.editRequest = async (req, res) => {
 
   if (
     currentRequest.status != "OPEN" ||
-    new Date().getTime() - new Date(currentRequest.createdAt).getTime() > 1.728e8
+    new Date().getTime() - new Date(currentRequest.createdAt).getTime() >
+      1.728e8
   ) {
     return res.status(500).json({
       message: "Cannot update request after 2 days of its creation",
@@ -200,10 +201,10 @@ exports.deleteRequest = async (req, res) => {
       .json({ error: "You are not allowed to perform this operation" });
   }
 
-  if(request.status!='OPEN'){
+  if (request.status != "OPEN") {
     return res
-    .status(403)
-    .json({ error: "You cannot delete request as status is not open" });
+      .status(403)
+      .json({ error: "You cannot delete request as status is not open" });
   }
 
   try {
@@ -218,32 +219,29 @@ exports.deleteRequest = async (req, res) => {
 };
 
 // article suggestion
-exports.suggestedArticle = async (req, res)=>{
-   console.log(req.params);
-  let user ;
+exports.suggestedArticle = async (req, res) => {
+  console.log(req.params);
+  let user;
   try {
-    user = await User.findOne({username : req.body.username}).exec()
-  }
-  catch (error) {
+    user = await User.findOne({ username: req.userData.username }).exec();
+  } catch (error) {
     return res.status(500).json({
-      error:
-        error.message || "Server error",
+      error: error.message || "Server error",
     });
   }
-  
+
   let article;
+  let slug = slugify(req.body.article.toLowerCase());
   try {
-    article = await Article.findOne({slug : req.body.article}).exec()
-  }
-  catch (error) {
+    article = await Article.findOne({ slug }).exec();
+  } catch (error) {
     return res.status(500).json({
-      error:
-        error.message || "server error",
+      error: error.message || "server error",
     });
   }
-   let update = {
+  let update = {
     article: article,
-    closedBy: user, 
+    closedBy: user,
   };
 
   let updatedRequest;
@@ -251,7 +249,7 @@ exports.suggestedArticle = async (req, res)=>{
     updatedRequest = await Request.findOneAndUpdate(
       {
         slug: req.params.slug,
-       },
+      },
       update,
       { new: true }
     )
@@ -265,18 +263,19 @@ exports.suggestedArticle = async (req, res)=>{
 
   if (!updatedRequest) {
     return res.status(404).json({
-      error:
-        " The request doesn't exist.",
+      error: " The request doesn't exist.",
     });
   }
   return res.status(200).json({ message: "Succesfully made the suggestion" });
-}
+};
 
-// Changing status 
-exports.changeRequestStatus = async (req, res) =>{
+// Changing status
+exports.changeRequestStatus = async (req, res) => {
   let request;
   try {
-    request = await Request.findOne({ slug :req.params.slug }).populate("postedBy").exec();
+    request = await Request.findOne({ slug: req.params.slug })
+      .populate("postedBy")
+      .exec();
   } catch (error) {
     return res.status(500).json({ error: error.message || "Server Error" });
   }
@@ -290,17 +289,15 @@ exports.changeRequestStatus = async (req, res) =>{
       .status(403)
       .json({ error: "You are not allowed to perform this operation" });
   }
-   let status;
-   if(req.body.approve="YES"){
-     status = "CLOSED";
-   }
-   else {
-     status ="OPEN";
-   }
+  let status;
+  if (req.body.approve === "YES") {
+    status = "CLOSED";
+  } else {
+    status = "OPEN";
+  }
 
   let update = {
     status: status,
- 
   };
 
   let updatedRequest;
@@ -308,7 +305,7 @@ exports.changeRequestStatus = async (req, res) =>{
     updatedRequest = await Request.findOneAndUpdate(
       {
         slug: req.params.slug,
-       },
+      },
       update,
       { new: true }
     )
@@ -322,14 +319,10 @@ exports.changeRequestStatus = async (req, res) =>{
 
   if (!updatedRequest) {
     return res.status(404).json({
-      error:
-        " The request doesn't exist.",
+      error: " The request doesn't exist.",
     });
   }
-  return res.status(200).json({ message: "Succesfully updated status for route" });
-
-
-
-
-
-}
+  return res
+    .status(200)
+    .json({ message: "Succesfully updated status for route" });
+};
