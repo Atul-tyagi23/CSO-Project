@@ -29,7 +29,7 @@ middlewareObj.extractAuthToken = async (req, res, next) => {
 			return res.status(401).json({ error: 'Not Authenticated' });
 		}
 		req.userData = { ...decodedToken };
-	} catch (error) {
+ 	} catch (error) {
 		return res.status(500).json({ error: 'Authentication failed. Please try again later' });
 	}
 	next();

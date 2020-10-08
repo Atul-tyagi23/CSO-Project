@@ -46,4 +46,6 @@ router.patch(
 
 router.delete(`/one/:slug`, middlewareObj.extractAuthToken, deleteOneAricle);
 
+//Adding or removing favourites
+
 module.exports = router;

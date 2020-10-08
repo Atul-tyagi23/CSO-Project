@@ -31,6 +31,12 @@ var UserSchema = new mongoose.Schema(
 			default:
 				'https://res.cloudinary.com/dr6pkartq/image/upload/v1599653070/cuwmqrs5zilbmkchik3i.png',
 		},
+		favs: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Article',
+			},
+		],
 		articles: [
 			{
 				type: mongoose.Schema.Types.ObjectId,

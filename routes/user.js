@@ -53,4 +53,6 @@ router.get('/logout', userModule.doLogout);
 
 router.get('/profile/:username', userModule.getDetails);
 
+router.patch("/favourite/:slug",  middlewareObj.extractAuthToken, userModule.favArticle)
+
 module.exports = router;

@@ -1,4 +1,6 @@
 const User = require("../models/user");
+const Article = require("../models/article");
+
 const cloudinary = require("cloudinary");
 const { createToken } = require("../helpers/auth");
 
@@ -312,4 +314,90 @@ exports.getDetails = async (req, res) => {
   return res.status(200).json({ userInfo: userInfo });
 };
 
-// Changing user password
+
+// Route for favourite articles
+
+exports.favArticle = async (req, res) =>{
+  let user;
+  try {
+    user = await User.findOne({ username: req.userData.username }).exec();
+  } catch (error) {
+    return res
+      .status(503)
+      .json({ message: "Server Unreachable. Try again later" });
+  }
+  
+  let article;
+  let slug = req.params.slug;
+  try {
+    article = await Article.findOne({ slug }).exec();
+  } catch (error) {
+    return res.status(500).json({ error: error.message || "Server Error" });
+  }
+
+  if (!article) {
+    return res.status(404).json({ error: "No article found " });
+  }
+
+ 
+  // check if req.userData._id exists in article.favs
+  function check(fav) {
+    return fav.equals(article._id);
+  }
+  let foundFav;
+  try{
+      foundFav = await user.favs.some(check)
+  }
+  catch(error){
+    return res.status(500).json({
+      error:
+        error.message || "Unable to add to favourite, please try later",
+    });
+  }
+ 
+
+  if (foundFav) {
+    try{
+      await user.favs.pull(article._id)
+    }
+    catch(error){
+      return res.status(500).json({
+        error:
+          error.message || "Unable to add to favourite, please try later",
+      });
+    }
+  } else {
+    try{
+      await user.favs.push(article._id)
+      
+    }
+    catch(error){
+      return res.status(500).json({
+        error:
+          error.message || "Unable to add to favourite, please try later",
+      });
+  }}
+
+  let savedUser ;
+  try {
+    savedUser = user.save();
+  }
+  catch(error){
+    return res.status(500).json({
+      error:
+        error.message || "Unable to add to favourite, please try later",
+  });
+  }
+  if(!savedUser){
+    return res.status(404).json({
+      error:
+        "The article either doesn't exist or you are updating someone else's article.",
+    });
+  }
+
+ 
+
+  return res.status(200).json({ message: "Succesfully added to favourites" });
+
+
+} 
