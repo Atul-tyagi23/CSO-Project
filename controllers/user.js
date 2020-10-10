@@ -68,7 +68,7 @@ exports.newUser = async (req, res) => {
 
   if (sameUser) {
     return res.status(400).json({
-      error: `Username  already registered. Please login with different username`,
+      error: `Username already registered. Please login with different username`,
     });
   }
 
@@ -110,6 +110,7 @@ exports.newUser = async (req, res) => {
     username: newUser.username,
     email: newUser.email,
     avatar: newUser.avatar,
+    favs: newUser.favs,
   });
 
   return res.status(200).json({ message: "Successfully Signed up!", token });
@@ -146,6 +147,7 @@ exports.doLogin = async (req, res, next) => {
     username: sameUser.username,
     email: sameUser.email,
     avatar: sameUser.avatar,
+    favs: sameUser.favs,
   });
 
   return res.status(200).json({ message: "Logged you in!", token });
@@ -277,6 +279,7 @@ exports.updateUserInfo = async (req, res) => {
     username: updatedUser.username,
     email: updatedUser.email,
     avatar: updatedUser.avatar,
+    favs: updatedUser.favs,
   });
   return res.status(200).json({
     message: "Updated user credentials successfully.",
@@ -380,9 +383,10 @@ exports.favArticle = async (req, res) => {
       return res.status(500).json({
         error: error.message || "Unable to add to favourite, please try later",
       });
-    }else{
+    } else {
       return res.status(500).json({
-        error: error.message || "Unable to remove from favourite, please try later",
+        error:
+          error.message || "Unable to remove from favourite, please try later",
       });
     }
   }
