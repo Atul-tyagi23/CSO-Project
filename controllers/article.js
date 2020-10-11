@@ -6,6 +6,7 @@ const User = require("../models/user");
 const Category = require("../models/category");
 const Article = require("../models/article");
 const defaultImagesArray = require("../helpers/defaultImages");
+const { decodeToken } = require("../helpers/auth");
 
 cloudinary.config({
   cloud_name: "dr6pkartq",
@@ -20,11 +21,9 @@ exports.createArticle = async (req, res) => {
   try {
     user = await User.findById(req.userData.id);
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        error: error.message || "Server error occurred. Try again later",
-      });
+    return res.status(500).json({
+      error: error.message || "Server error occurred. Try again later",
+    });
   }
 
   if (!user) {
@@ -200,7 +199,23 @@ exports.articleBySlug = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 
-  return res.status(200).json({ article, articles });
+  let dToken;
+  if (!req.headers.token) {
+    return res.status(200).json({ article, articles });
+  }
+
+  try {
+    dToken = decodeToken(req.headers.token);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "There occurred a problem in fecthing the article" });
+  }
+  if (!dToken) {
+    return res.status(200).json({ article, articles });
+  } else {
+    return res.status(200).json({ article, articles });
+  }
 };
 
 exports.editOneArticle = async (req, res) => {
@@ -210,11 +225,9 @@ exports.editOneArticle = async (req, res) => {
   try {
     user = await User.findById(req.userData.id);
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        error: error.message || "Server error occurred. Try again later",
-      });
+    return res.status(500).json({
+      error: error.message || "Server error occurred. Try again later",
+    });
   }
 
   if (!user) {
