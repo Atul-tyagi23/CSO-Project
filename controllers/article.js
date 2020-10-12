@@ -213,9 +213,12 @@ exports.articleBySlug = async (req, res) => {
   }
   if (!dToken) {
     return res.status(200).json({ article, articles });
-  } else {
-    return res.status(200).json({ article, articles });
   }
+  let isFav = false;
+
+  isFav = article.favouritedBy.includes(dToken.id);
+
+  return res.status(200).json({ article, articles, isFav });
 };
 
 exports.editOneArticle = async (req, res) => {
@@ -326,7 +329,6 @@ exports.deleteOneAricle = async (req, res) => {
 };
 
 // Route for favourite articles
-
 
 exports.favouritedBy = async (req, res) => {
   let user;
