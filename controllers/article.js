@@ -408,10 +408,15 @@ exports.favouritedBy = async (req, res) => {
     });
   }
   if (flag == 1)
-    return res.status(200).json({ message: "Succesfully added to favourites" });
+    return res
+      .status(200)
+      .json({ message: "Succesfully added to favourites", addedFav: true });
   else {
     return res
       .status(200)
-      .json({ message: "Succesfully removed from favourites" });
+      .json({
+        message: "Succesfully removed from favourites",
+        addedFav: false,
+      });
   }
 };
