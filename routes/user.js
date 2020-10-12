@@ -40,7 +40,8 @@ router.patch(
 	middlewareObj.checkUserOwnership,
 	userValidators.userEditValidator,
 	runValidation,
-	userModule.updateUserInfo
+	userModule.updateUserInfo,
+	
 );
 
 // Login route
@@ -53,5 +54,8 @@ router.get('/logout', userModule.doLogout);
 
 router.get('/profile/:username', userModule.getDetails);
 
+// Get fav articles of user
+
+router.get('/favourites/', middlewareObj.extractAuthToken, userModule.getFavourites);
 
 module.exports = router;

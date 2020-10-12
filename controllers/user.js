@@ -311,9 +311,37 @@ exports.getDetails = async (req, res) => {
   if (!foundUser) {
     return res.status(404).json({ message: "User not found" });
   }
-  // console.log(foundUser);
-  let userInfo = foundUser;
+   let userInfo = foundUser;
 
   return res.status(200).json({ userInfo: userInfo });
 };
 
+// Get fav articles of a particluar user
+
+exports.getFavourites = async (req, res) =>{
+  let user;
+  try {
+    user = await User.findOne({ username: req.userData.username }).exec();
+  } catch (error) {
+    return res
+      .status(503)
+      .json({ message: "Server Unreachable. Try again later" });
+  }
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  try {
+    articles = await Article.find({
+    favouritedBy: { $in: user._id },
+  })
+  .select("slug title category featuredPhoto")
+  .exec();
+  } 
+  catch (error) {
+   return res.status(500).json({ message: error.message });
+  }
+  return res.status(200).json({ articles });
+
+
+}
