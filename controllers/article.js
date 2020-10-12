@@ -324,3 +324,92 @@ exports.deleteOneAricle = async (req, res) => {
 
   return res.status(200).json({ message: "Deleted article succesfully" });
 };
+
+// Route for favourite articles
+
+
+exports.favouritedBy = async (req, res) => {
+  let user;
+  try {
+    user = await User.findOne({ username: req.userData.username }).exec();
+  } catch (error) {
+    return res
+      .status(503)
+      .json({ message: "Server Unreachable. Try again later" });
+  }
+
+  let article;
+  let slug = req.params.slug;
+  try {
+    article = await Article.findOne({ slug }).exec();
+  } catch (error) {
+    return res.status(500).json({ error: error.message || "Server Error" });
+  }
+
+  if (!article) {
+    return res.status(404).json({ error: "No article found " });
+  }
+
+  // check if req.userData._id exists in article.favs
+  function check(fav) {
+    return fav.equals(user._id);
+  }
+  let foundUser;
+  try {
+    foundUser = await article.favouritedBy.some(check);
+  } catch (error) {
+    return res.status(500).json({
+      error: error.message || "Looks like some error occurred. Try again later",
+    });
+  }
+  let flag;
+  if (foundUser) {
+    flag = 0;
+    try {
+      await article.favouritedBy.pull(user._id);
+    } catch (error) {
+      return res.status(500).json({
+        error:
+          error.message || "Unable to remove from favourite, please try later",
+      });
+    }
+  } else {
+    flag = 1;
+    try {
+      await article.favouritedBy.push(user._id);
+    } catch (error) {
+      return res.status(500).json({
+        error: error.message || "Unable to add to favourite, please try later",
+      });
+    }
+  }
+
+  let savedArticle;
+  try {
+    savedArticle = article.save();
+  } catch (error) {
+    if (!flag) {
+      return res.status(500).json({
+        error: error.message || "Unable to add to favourite, please try later",
+      });
+    } else {
+      return res.status(500).json({
+        error:
+          error.message || "Unable to remove from favourite, please try later",
+      });
+    }
+  }
+  if (!savedArticle) {
+    return res.status(404).json({
+      error:
+        "The article either doesn't exist or you are updating someone else's article.",
+    });
+  }
+  if (flag == 1)
+    return res.status(200).json({ message: "Succesfully added to favourites" });
+  else {
+    return res
+      .status(200)
+      .json({ message: "Succesfully removed from favourites" });
+  }
+};

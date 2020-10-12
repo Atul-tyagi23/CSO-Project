@@ -6,6 +6,7 @@ const {
   articleBySlug,
   deleteOneAricle,
   editOneArticle,
+  favouritedBy,
 } = require("../controllers/article");
 const multer = require("multer");
 const middlewareObj = require("../middleware/middleware");
@@ -46,6 +47,8 @@ router.patch(
 
 router.delete(`/one/:slug`, middlewareObj.extractAuthToken, deleteOneAricle);
 
-//Adding or removing favourites
+// route for fav articles
+router.patch("/favourite/:slug",  middlewareObj.extractAuthToken, favouritedBy);
+
 
 module.exports = router;
