@@ -56,6 +56,6 @@ router.get('/profile/:username', userModule.getDetails);
 
 // Get fav articles of user
 
-router.get('/favourites/', middlewareObj.extractAuthToken, userModule.getFavourites);
+router.get('/favourites/:username', middlewareObj.extractAuthToken, userModule.getFavourites);
 
 module.exports = router;

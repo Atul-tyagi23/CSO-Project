@@ -311,17 +311,17 @@ exports.getDetails = async (req, res) => {
   if (!foundUser) {
     return res.status(404).json({ message: "User not found" });
   }
-   let userInfo = foundUser;
+  let userInfo = foundUser;
 
   return res.status(200).json({ userInfo: userInfo });
 };
 
 // Get fav articles of a particluar user
 
-exports.getFavourites = async (req, res) =>{
+exports.getFavourites = async (req, res) => {
   let user;
   try {
-    user = await User.findOne({ username: req.userData.username }).exec();
+    user = await User.findOne({ username: req.params.username }).exec();
   } catch (error) {
     return res
       .status(503)
@@ -331,17 +331,21 @@ exports.getFavourites = async (req, res) =>{
     return res.status(404).json({ message: "User not found" });
   }
 
+  if (user.username !== req.userData.username) {
+    return res
+      .status(403)
+      .json({ error: "You are not allowed to see this page." });
+  }
+
+  let articles;
   try {
     articles = await Article.find({
-    favouritedBy: { $in: user._id },
-  })
-  .select("slug title category featuredPhoto")
-  .exec();
-  } 
-  catch (error) {
-   return res.status(500).json({ message: error.message });
+      favouritedBy: { $in: user._id },
+    })
+      .select("slug title category featuredPhoto")
+      .exec();
+  } catch (error) {
+    return res.status(500).json({ message: error.message || "Server down" });
   }
   return res.status(200).json({ articles });
-
-
-}
+};
