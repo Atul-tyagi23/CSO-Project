@@ -342,7 +342,7 @@ exports.getFavourites = async (req, res) => {
     articles = await Article.find({
       favouritedBy: { $in: user._id },
     })
-      .select("slug title category featuredPhoto")
+      .select("slug title category featuredPhoto mdesc")
       .exec();
   } catch (error) {
     return res.status(500).json({ message: error.message || "Server down" });
