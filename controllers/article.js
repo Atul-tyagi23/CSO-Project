@@ -420,3 +420,98 @@ exports.favouritedBy = async (req, res) => {
       });
   }
 };
+
+// Route for like / unlike
+
+exports.likedBy = async (req, res) => {
+  let user;
+  try {
+    user = await User.findOne({ username: req.userData.username }).exec();
+  } catch (error) {
+    return res
+      .status(503)
+      .json({ message: "Server Unreachable. Try again later" });
+  }
+
+  let article;
+  let slug = req.params.slug;
+  try {
+    article = await Article.findOne({ slug }).exec();
+  } catch (error) {
+    return res.status(500).json({ error: error.message || "Server Error" });
+  }
+
+  if (!article) {
+    return res.status(404).json({ error: "No article found " });
+  }
+
+  // check if req.userData._id exists in article.favs
+  function check(like) {
+    return like.equals(user._id);
+  }
+  let foundUser;
+  try {
+    foundUser = await article.likedBy.some(check);
+  } catch (error) {
+    return res.status(500).json({
+      error: error.message || "Looks like some error occurred. Try again later",
+    });
+  }
+  let flag;
+  if (foundUser) {
+    flag = 0;
+    try {
+      await article.likedBy.pull(user._id);
+      await article.likes --;
+    } catch (error) {
+      return res.status(500).json({
+        error:
+          error.message || "Unable to unlike this article, please try later",
+      });
+    }
+  } else {
+    flag = 1;
+    try {
+      await article.likedBy.push(user._id);
+      await article.likes ++;
+    } catch (error) {
+      return res.status(500).json({
+        error: error.message || "Unable to like this article, please try later",
+      });
+    }
+  }
+
+  let savedArticle;
+  try {
+    savedArticle = article.save();
+  } catch (error) {
+    if (!flag) {
+      return res.status(500).json({
+        error: error.message || "Unable to unlike this article, please try later",
+      });
+    } else {
+      return res.status(500).json({
+        error:
+          error.message || "Unable to like this article, please try later",
+      });
+    }
+  }
+  if (!savedArticle) {
+    return res.status(404).json({
+      error:
+        "The article either doesn't exist or you are updating someone else's article.",
+    });
+  }
+  if (flag == 1)
+    return res
+      .status(200)
+      .json({ message: "Article liked successfully ", likes : article.likes });
+  else {
+    return res
+      .status(200)
+      .json({
+        message: "Succesfully removed like",
+        likes: article.likes,
+      });
+  }
+};
