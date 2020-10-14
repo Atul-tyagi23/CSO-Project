@@ -168,6 +168,7 @@ exports.articleBySlug = async (req, res) => {
     article = await Article.findOne({ slug: slg })
       .populate("category")
       .populate("postedBy", "-password -articles -isAdmin")
+      .populate("likedBy", "name username avatar")
       .exec();
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -412,12 +413,10 @@ exports.favouritedBy = async (req, res) => {
       .status(200)
       .json({ message: "Succesfully added to favourites", addedFav: true });
   else {
-    return res
-      .status(200)
-      .json({
-        message: "Succesfully removed from favourites",
-        addedFav: false,
-      });
+    return res.status(200).json({
+      message: "Succesfully removed from favourites",
+      addedFav: false,
+    });
   }
 };
 
@@ -436,7 +435,9 @@ exports.likedBy = async (req, res) => {
   let article;
   let slug = req.params.slug;
   try {
-    article = await Article.findOne({ slug }).exec();
+    article = await Article.findOne({ slug })
+      .populate("likedBy", "name username avatar")
+      .exec();
   } catch (error) {
     return res.status(500).json({ error: error.message || "Server Error" });
   }
@@ -462,7 +463,7 @@ exports.likedBy = async (req, res) => {
     flag = 0;
     try {
       await article.likedBy.pull(user._id);
-      await article.likes --;
+      await article.likes--;
     } catch (error) {
       return res.status(500).json({
         error:
@@ -473,7 +474,7 @@ exports.likedBy = async (req, res) => {
     flag = 1;
     try {
       await article.likedBy.push(user._id);
-      await article.likes ++;
+      await article.likes++;
     } catch (error) {
       return res.status(500).json({
         error: error.message || "Unable to like this article, please try later",
@@ -487,12 +488,12 @@ exports.likedBy = async (req, res) => {
   } catch (error) {
     if (!flag) {
       return res.status(500).json({
-        error: error.message || "Unable to unlike this article, please try later",
+        error:
+          error.message || "Unable to unlike this article, please try later",
       });
     } else {
       return res.status(500).json({
-        error:
-          error.message || "Unable to like this article, please try later",
+        error: error.message || "Unable to like this article, please try later",
       });
     }
   }
@@ -503,15 +504,16 @@ exports.likedBy = async (req, res) => {
     });
   }
   if (flag == 1)
-    return res
-      .status(200)
-      .json({ message: "Article liked successfully ", likes : article.likes });
+    return res.status(200).json({
+      message: "Article liked successfully ",
+      likes: article.likes,
+      likedList: article.likedBy,
+    });
   else {
-    return res
-      .status(200)
-      .json({
-        message: "Succesfully removed like",
-        likes: article.likes,
-      });
+    return res.status(200).json({
+      message: "Succesfully removed like",
+      likes: article.likes,
+      likedList: article.likedBy,
+    });
   }
 };
