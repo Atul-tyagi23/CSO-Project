@@ -517,3 +517,45 @@ exports.likedBy = async (req, res) => {
     });
   }
 };
+
+// route to search articles
+exports.listSearch = async (req, res) => {
+  let { search } = req.query;
+  let articles;
+  search = search.split(" ");
+  search = search.filter((e) => !["a", "an", "and", "the", "or"].includes(e));
+
+  search = search.join("|");
+
+  if (search) {
+    try {
+      articles = await Article.find({
+        $or: [
+          { title: { $regex: search, $options: "i" } },
+          { body: { $regex: search, $options: "i" } },
+        ],
+      })
+        .select("slug title featuredPhoto mdesc")
+        .sort({ createdAt: -1 })
+        .lean()
+        .exec();
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ error: "Server Down. Please try again later" });
+    }
+  } else {
+    try {
+      articles = await Article.find({})
+        .select("slug title featuredPhoto mdesc")
+        .sort({ createdAt: -1 })
+        .lean()
+        .exec();
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ error: "Unable to search. Please try again later" });
+    }
+  }
+  return res.status(200).json({ foundArticles: articles });
+};

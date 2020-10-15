@@ -7,7 +7,8 @@ const {
   deleteOneAricle,
   editOneArticle,
   favouritedBy,
-  likedBy, 
+  likedBy,
+  listSearch,
 } = require("../controllers/article");
 const multer = require("multer");
 const middlewareObj = require("../middleware/middleware");
@@ -49,11 +50,12 @@ router.patch(
 router.delete(`/one/:slug`, middlewareObj.extractAuthToken, deleteOneAricle);
 
 // route for fav articles
-router.patch("/favourite/:slug",  middlewareObj.extractAuthToken, favouritedBy);
+router.patch("/favourite/:slug", middlewareObj.extractAuthToken, favouritedBy);
 
-// route for like/ unlike article 
+// route for like/ unlike article
 
 router.patch("/react/:slug", middlewareObj.extractAuthToken, likedBy);
 
+router.get("/search", listSearch);
 
 module.exports = router;
