@@ -522,10 +522,12 @@ exports.likedBy = async (req, res) => {
 exports.listSearch = async (req, res) => {
   let { search } = req.query;
   let articles;
-  search = search.split(" ");
-  search = search.filter((e) => !["a", "an", "and", "the", "or"].includes(e));
+  if (req.headers.searchtype !== "EXACT") {
+    search = search.split(" ");
+    search = search.filter((e) => !["a", "an", "and", "the", "or"].includes(e));
 
-  search = search.join("|");
+    search = search.join("|");
+  }
 
   if (search) {
     try {
@@ -535,19 +537,23 @@ exports.listSearch = async (req, res) => {
           { body: { $regex: search, $options: "i" } },
         ],
       })
-        .select("slug title featuredPhoto mdesc")
+        .select("-body -likedBy -likes -favouritedBy")
+        .populate("postedBy", "name username")
+        .populate("category", "name")
         .sort({ createdAt: -1 })
         .lean()
         .exec();
     } catch (error) {
-      return res
-        .status(500)
-        .json({ error: "Server Down. Please try again later" });
+      return res.status(500).json({
+        error: "Server Down. Please try again later",
+      });
     }
   } else {
     try {
       articles = await Article.find({})
-        .select("slug title featuredPhoto mdesc")
+        .select("-body -likedBy -likes -favouritedBy")
+        .populate("postedBy", "name username")
+        .populate("category", "name")
         .sort({ createdAt: -1 })
         .lean()
         .exec();
