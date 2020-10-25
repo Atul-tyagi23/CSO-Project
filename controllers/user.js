@@ -301,8 +301,11 @@ exports.getDetails = async (req, res) => {
       })
       .lean()
       .exec();
-    foundUser.articles.sort((a, b) => b.updatedAt - a.updatedAt);
+    if (foundUser) {
+      foundUser.articles.sort((a, b) => b.updatedAt - a.updatedAt);
+    }
   } catch (error) {
+    console.log(error);
     return res
       .status(503)
       .json({ message: "Server Unreachable. Try again later" });
