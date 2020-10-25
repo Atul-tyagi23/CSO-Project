@@ -370,7 +370,7 @@ exports.getArticlesBySpecificUser = async (req, res) => {
   try {
     articles = await Article.find({ postedBy: user._id })
       .select("-body -likes -likedBy -favouritedBy")
-      .populate("categories")
+      .populate("category")
       .populate("postedBy", "name username")
       .lean()
       .exec();
