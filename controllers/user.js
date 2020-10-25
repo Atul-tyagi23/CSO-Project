@@ -349,3 +349,30 @@ exports.getFavourites = async (req, res) => {
   }
   return res.status(200).json({ articles });
 };
+
+exports.getArticlesBySpecificUser = async (req, res) => {
+  let user;
+  try {
+    user = await User.findOne({ username: req.params.username }).exec();
+  } catch (error) {
+    return res
+      .status(503)
+      .json({ message: "Server Unreachable. Try again later" });
+  }
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  let articles;
+  try {
+    articles = await Article.find({ postedBy: user._id })
+      .select("-body -likes -likedBy -favouritedBy")
+      .populate("categories")
+      .populate("postedBy", "name username")
+      .lean()
+      .exec();
+  } catch (error) {
+    return res.status(500).json({ message: error.message || "Server down" });
+  }
+  return res.status(200).json({ articles });
+};
