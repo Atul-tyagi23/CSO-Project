@@ -57,6 +57,8 @@ router.post(
   userModule.doLogin
 );
 
+router.post("/googleSignin", userModule.googleSignin);
+
 // Logout route
 router.get("/logout", userModule.doLogout);
 

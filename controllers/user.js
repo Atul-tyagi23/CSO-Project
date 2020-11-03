@@ -1,5 +1,11 @@
 const User = require("../models/user");
 const Article = require("../models/article");
+const { OAuth2Client } = require("google-auth-library");
+const shortId = require("shortid");
+
+const client = new OAuth2Client(
+  `705156089973-dolscpja0fjq8pg1ckcskd7b1ltblr6h.apps.googleusercontent.com`
+);
 
 const cloudinary = require("cloudinary");
 const { createToken } = require("../helpers/auth");
@@ -378,4 +384,75 @@ exports.getArticlesBySpecificUser = async (req, res) => {
     return res.status(500).json({ message: error.message || "Server down" });
   }
   return res.status(200).json({ articles });
+};
+
+// google login
+exports.googleSignin = async (req, res) => {
+  const idToken = req.body.gToken;
+  let ticket, payload;
+  try {
+    ticket = await client.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Error in logging with google" });
+  }
+
+  payload = ticket.getPayload();
+
+  let existingUser;
+
+  try {
+    existingUser = await User.findOne({ email: payload.email }).lean().exec();
+  } catch (error) {
+    return res.status(500).json({
+      error:
+        error.message ||
+        "Some problem occurred while google login. Please try again later",
+    });
+  }
+
+  if (existingUser) {
+    let token = createToken({
+      id: existingUser._id,
+      username: existingUser.username,
+      email: existingUser.email,
+      avatar: existingUser.avatar,
+      favs: existingUser.favs,
+    });
+    return res.status(200).json({ message: "Logged you in!", token });
+  }
+
+  let newUserUsername = shortId.generate();
+
+  let newUser = new User({
+    name: payload.name,
+    email: payload.email,
+    avatar: payload.picture,
+    password: payload.jti,
+    username: newUserUsername,
+  });
+
+  try {
+    await newUser.save();
+  } catch (error) {
+    return res.status(500).json({
+      error:
+        error.message ||
+        "Google Login failed. Please try again after sometime.",
+    });
+  }
+
+  let token = createToken({
+    id: newUser._id,
+    username: newUser.username,
+    email: newUser.email,
+    avatar: newUser.avatar,
+    favs: newUser.favs,
+  });
+  return res
+    .status(200)
+    .json({ message: "Made your account succefully!", token });
 };
