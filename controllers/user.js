@@ -510,21 +510,8 @@ sgMail
 // Route for User email verification 
 
 exports.emailVerify = async (req, res)=>{
-  let user;
-  try {
-    user = await User.findOne({ username: req.params.username }).exec();
-  } catch (error) {
-    return res
-      .status(503)
-      .json({ message: "Server Unreachable. Try again later" });
-  }
-  if (!user) {
-    return res.status(404).json({ message: "User not found"});
-  }
-  let token = req.params.token;
-  let decodedToken = decodeToken(token)
-  if (!decodedToken) {
-    return res.status(401).json({ error: 'Incorrect token please send it again' });
+  if(!req.body.isVerified){
+    return res.status(500).json({ message: "Could not verify user, Incorrect token" });
   }
   let updatedUser;
   try {
@@ -545,6 +532,5 @@ exports.emailVerify = async (req, res)=>{
   return res
   .status(200)
   .json({ message: "Email Verified Successfully!" });
-
 
 }

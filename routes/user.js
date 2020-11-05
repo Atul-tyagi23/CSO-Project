@@ -84,7 +84,7 @@ router.get("/emailverification/:username",
 );
 
 // Email verification 
-router.patch("/profile/:username/:token",
+router.patch("/emailverification/:username",
   middlewareObj.extractAuthToken,
   userModule.emailVerify
 );
