@@ -8,9 +8,10 @@ const client = new OAuth2Client(
 );
 
 const cloudinary = require("cloudinary");
-const { createToken } = require("../helpers/auth");
+const { createToken, decodeToken } = require("../helpers/auth");
 const bcrypt = require("bcryptjs");
-const sgMail = require('@sendgrid/mail')
+const sgMail = require('@sendgrid/mail');
+const router = require("../routes/user");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 // Get all users
@@ -459,7 +460,7 @@ exports.googleSignin = async (req, res) => {
 };
 
 // route for sending email for verification 
-exports.emailVerify = async (req, res)=>{
+exports.emailSend = async (req, res)=>{
   let user;
   try {
     user = await User.findOne({ username: req.params.username }).exec();
@@ -490,7 +491,7 @@ const msg = {
   from: `atultyagibest@gmail.com`, // Change to your verified sender
   subject: `Click on the below hyperlink to verify your email`,
   text: `and easy to do anywhere, even with Node.js`,
-  html: `<p> Titan Read requires a verified email address so you can take full advantage of its features </p> <a href = "${process.env.CLIENT_URL}/user/profile/${user.username}?token=${token}">CLICK HERE TO VERIFY</a>`,
+  html: `<p> Titan Read requires a verified email address so you can take full advantage of its features </p> <a href = "${process.env.CLIENT_URL}/api/user/profile/${user.username}?token=${token}">CLICK HERE TO VERIFY</a>`,
 }
 sgMail
   .send(msg)
@@ -503,6 +504,47 @@ sgMail
     return res
       .status(503)
       .json({ message: "Server Unreachable. Try again later" });
-  })
-  
+  }) 
+}
+
+// Route for User email verification 
+
+exports.emailVerify = async (req, res)=>{
+  let user;
+  try {
+    user = await User.findOne({ username: req.params.username }).exec();
+  } catch (error) {
+    return res
+      .status(503)
+      .json({ message: "Server Unreachable. Try again later" });
+  }
+  if (!user) {
+    return res.status(404).json({ message: "User not found"});
+  }
+  let token = req.params.token;
+  let decodedToken = decodeToken(token)
+  if (!decodedToken) {
+    return res.status(401).json({ error: 'Incorrect token please send it again' });
+  }
+  let updatedUser;
+  try {
+    updatedUser = await User.findOneAndUpdate(
+      { username: user.username },
+      {isVerified: true},
+      { new: true }
+    ).exec();
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Could not verify user" });
+  }
+
+  if (!updatedUser) {
+    return res.status(500).json({ message: "Error in verifying user" });
+  }
+
+  return res
+  .status(200)
+  .json({ message: "Email Verified Successfully!" });
+
+
 }

@@ -80,6 +80,12 @@ router.get("/articles/:username", userModule.getArticlesBySpecificUser);
 // Send email verification mail 
 router.get("/emailverification/:username", 
   middlewareObj.extractAuthToken,
+  userModule.emailSend
+);
+
+// Email verification 
+router.patch("/profile/:username/:token",
+  middlewareObj.extractAuthToken,
   userModule.emailVerify
 );
 
