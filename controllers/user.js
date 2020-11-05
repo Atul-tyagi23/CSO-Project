@@ -9,8 +9,9 @@ const client = new OAuth2Client(
 
 const cloudinary = require("cloudinary");
 const { createToken } = require("../helpers/auth");
-
 const bcrypt = require("bcryptjs");
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 // Get all users
 exports.getAllUsers = (req, res) => {
@@ -456,3 +457,52 @@ exports.googleSignin = async (req, res) => {
     .status(200)
     .json({ message: "Made your account succefully!", token });
 };
+
+// route for sending email for verification 
+exports.emailVerify = async (req, res)=>{
+  let user;
+  try {
+    user = await User.findOne({ username: req.params.username }).exec();
+  } catch (error) {
+    return res
+      .status(503)
+      .json({ message: "Server Unreachable. Try again later" });
+  }
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  if (user.username !== req.userData.username) {
+    return res
+      .status(403)
+      .json({ error: "You are not allowed to see this page." });
+  }
+
+  let token = createToken({
+    id: user.id,
+    username: user.username,
+    email: user.email,
+  });
+
+
+const msg = {
+  to: user.email , // Change to your recipient
+  from: `atultyagibest@gmail.com`, // Change to your verified sender
+  subject: `Click on the below hyperlink to verify your email`,
+  text: `and easy to do anywhere, even with Node.js`,
+  html: `<p> Titan Read requires a verified email address so you can take full advantage of its features </p> <a href = "${process.env.CLIENT_URL}/user/profile/${user.username}?token=${token}">CLICK HERE TO VERIFY</a>`,
+}
+sgMail
+  .send(msg)
+  .then(() => {
+    return res
+    .status(200)
+    .json({ message: "Email sent! please check your email to verify it." });
+  })
+  .catch((error) => {
+    return res
+      .status(503)
+      .json({ message: "Server Unreachable. Try again later" });
+  })
+  
+}

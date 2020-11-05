@@ -77,4 +77,10 @@ router.get(
 //
 router.get("/articles/:username", userModule.getArticlesBySpecificUser);
 
+// Send email verification mail 
+router.post("/emailverification/:username", 
+  middlewareObj.extractAuthToken,
+  userModule.emailVerify
+);
+
 module.exports = router;
