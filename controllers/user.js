@@ -435,6 +435,7 @@ exports.googleSignin = async (req, res) => {
     avatar: payload.picture,
     password: payload.jti,
     username: newUserUsername,
+    isVerified: true,
   });
 
   try {
@@ -490,7 +491,7 @@ exports.emailSend = async (req, res) => {
     from: `atultyagibest@gmail.com`, // Change to your verified sender
     subject: `Click on the below hyperlink to verify your email`,
     text: `and easy to do anywhere, even with Node.js`,
-    html: `<p> Titan Read requires a verified email address so you can take full advantage of its features </p> <a href = "${process.env.CLIENT_URL}/api/user/profile/${user.username}?token=${token}">CLICK HERE TO VERIFY</a>`,
+    html: `<p> Titan Read requires a verified email address so you can take full advantage of its features </p> <a href = "${process.env.CLIENT_URL}/user/profile/${user.username}?token=${token}">CLICK HERE TO VERIFY</a>`,
   };
   sgMail
     .send(msg)
@@ -517,7 +518,7 @@ exports.emailVerify = async (req, res) => {
   let updatedUser;
   try {
     updatedUser = await User.findOneAndUpdate(
-      { username: user.username },
+      { username: req.params.username },
       { isVerified: true },
       { new: true }
     ).exec();
