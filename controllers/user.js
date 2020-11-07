@@ -618,3 +618,84 @@ exports.emailVerify = async (req, res)=>{
   .status(200)
   .json({ message: "Email Verified Successfully!" });
 }
+
+
+// route for sending email for forgotten password
+exports.emailForPassword = async (req, res)=>{
+  let user;
+  try {
+    user = await User.findOne({ username: req.params.username }).exec();
+  } catch (error) {
+    return res
+      .status(503)
+      .json({ message: "Server Unreachable. Try again later" });
+  }
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+
+  let token = createToken({
+    id: user.id,
+    username: user.username,
+    email: user.email,
+  });
+
+
+const msg = {
+  to: user.email , // Change to your recipient
+  from: `atultyagibest@gmail.com`, // Change to your verified sender
+  subject: `Password recovery`,
+  text: `and easy to do anywhere, even with Node.js`,
+  html: `<p>Please click  on the below hyperlink to change your password  </p> <a href = "${process.env.CLIENT_URL}/api/user/reset-password?token=${token}">Click here</a>`,
+}
+sgMail
+  .send(msg)
+  .then(() => {
+    return res
+    .status(200)
+    .json({ message: "Email sent! please check your email." });
+  })
+  .catch((error) => {
+    return res
+      .status(503)
+      .json({ message: "Server Unreachable. Try again later" });
+  }) 
+}
+
+
+// Route to create new Password
+exports.passwordRecover = async (req, res)=>{
+  if(!req.body.isVerified){
+    return res.status(500).json({ message: "Could not verify user, Incorrect token" });
+  }
+  if(req.body.oldpassword !== req.body.newpassword)
+  return res.status(500).json({ error: 'Password not matched, Please retry' });
+  
+  let hashedPassword;
+  try {
+    hashedPassword = await bcrypt.hash(req.body.newpassword, 12);
+  } catch (error) {
+    return res.status(500).json({ error: error });
+  }
+
+  let updatedUser;
+  try {
+    updatedUser = await User.findOneAndUpdate(
+      { password: hashedPassword },
+      {isVerified: true},
+      { new: true }
+    ).exec();
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Could not change password please try again" });
+  }
+
+  if (!updatedUser) {
+    return res.status(500).json({ message: "Error in updating password" });
+  }
+
+  return res
+  .status(200)
+  .json({ message: "Email Verified Successfully!" });
+}

@@ -89,4 +89,16 @@ router.patch("/emailverification/:username",
   userModule.emailVerify
 );
 
+// Forget password 
+router.get("/recoverpassword/:username", 
+  middlewareObj.extractAuthToken,
+  userModule.emailForPassword
+);
+
+// changing password
+router.patch("/recoverpassword/:username",
+  middlewareObj.extractAuthToken,
+  userModule.passwordRecover
+);
+
 module.exports = router;
