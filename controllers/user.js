@@ -508,7 +508,6 @@ sgMail
 }
 
 // Route for User email verification 
-
 exports.emailVerify = async (req, res)=>{
   if(!req.body.isVerified){
     return res.status(500).json({ message: "Could not verify user, Incorrect token" });
@@ -533,4 +532,89 @@ exports.emailVerify = async (req, res)=>{
   .status(200)
   .json({ message: "Email Verified Successfully!" });
 
+}
+
+// route for sending email for forgotten password
+exports.emailSend = async (req, res)=>{
+  let user;
+  try {
+    user = await User.findOne({ username: req.params.username }).exec();
+  } catch (error) {
+    return res
+      .status(503)
+      .json({ message: "Server Unreachable. Try again later" });
+  }
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  if (user.username !== req.userData.username) {
+    return res
+      .status(403)
+      .json({ error: "You are not allowed to see this page." });
+  }
+
+  let token = createToken({
+    id: user.id,
+    username: user.username,
+    email: user.email,
+  });
+
+
+const msg = {
+  to: user.email , // Change to your recipient
+  from: `atultyagibest@gmail.com`, // Change to your verified sender
+  subject: `Password recovery`,
+  text: `and easy to do anywhere, even with Node.js`,
+  html: `<p>Please click  on the below hyperlink to change your password  </p> <a href = "${process.env.CLIENT_URL}/api/user/profile/${user.username}?token=${token}">Click here</a>`,
+}
+sgMail
+  .send(msg)
+  .then(() => {
+    return res
+    .status(200)
+    .json({ message: "Email sent! please check your email." });
+  })
+  .catch((error) => {
+    return res
+      .status(503)
+      .json({ message: "Server Unreachable. Try again later" });
+  }) 
+}
+
+
+// Route to create new Password
+exports.emailVerify = async (req, res)=>{
+  if(!req.body.isVerified){
+    return res.status(500).json({ message: "Could not verify user, Incorrect token" });
+  }
+  if(req.body.oldpassword !== req.body.newpassword)
+  return res.status(500).json({ error: 'Password not matched, Please retry' });
+  
+  let hashedPassword;
+  try {
+    hashedPassword = await bcrypt.hash(req.body.newpassword, 12);
+  } catch (error) {
+    return res.status(500).json({ error: error });
+  }
+
+  let updatedUser;
+  try {
+    updatedUser = await User.findOneAndUpdate(
+      { password: hashedPassword },
+      {isVerified: true},
+      { new: true }
+    ).exec();
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Could not verify user" });
+  }
+
+  if (!updatedUser) {
+    return res.status(500).json({ message: "Error in verifying user" });
+  }
+
+  return res
+  .status(200)
+  .json({ message: "Email Verified Successfully!" });
 }
