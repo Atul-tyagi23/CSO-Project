@@ -77,25 +77,27 @@ router.get(
 //
 router.get("/articles/:username", userModule.getArticlesBySpecificUser);
 
-// Send email verification mail 
-router.get("/emailverification/:username", 
+// Send email verification mail
+router.get(
+  "/emailverification/:username",
   middlewareObj.extractAuthToken,
   userModule.emailSend
 );
 
-// Email verification 
-router.patch("/emailverification/:username",
+// Email verification
+router.patch(
+  "/emailverification/:username",
   middlewareObj.extractAuthToken,
   userModule.emailVerify
 );
 
-// Forget password 
-router.get("/recoverpassword/:username", 
-  userModule.emailForPassword
-);
+// Forget password
+router.get("/recoverpassword/:username", userModule.emailForPassword);
 
 // changing password
-router.patch("/recoverpassword/:username",  
+router.patch(
+  "/recoverpassword/:username",
+  middlewareObj.checkValidToken,
   userModule.passwordRecover
 );
 
