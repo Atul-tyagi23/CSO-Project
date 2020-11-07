@@ -558,7 +558,7 @@ exports.emailForPassword = async (req, res) => {
     from: `atultyagibest@gmail.com`, // Change to your verified sender
     subject: `Password recovery`,
     text: `Use the link below to reset your password`,
-    html: `<p>Please click  on the below hyperlink to change your password  </p> <a href = "${process.env.CLIENT_URL}/api/user/reset-password?token=${token}">Click here</a>
+    html: `<p>Please click  on the below hyperlink to change your password  </p> <a href = "${process.env.CLIENT_URL}/recovery/reset-password?token=${token}">Click here</a>
   <p><strong>Note:</strong> Link expires in 1 day.</p>`,
   };
   sgMail
